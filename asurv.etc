@@ -1,0 +1,389 @@
+X*****************************************************************************
+X*********************************** asurv.lst *******************************
+X*****************************************************************************
+Xf77 -f -o asurv  asurv.f \
+Xaarray.f \
+Xagauss.f \
+Xakrank.f\
+Xarisk.f \
+Xbhk.f \
+Xbin.f \
+Xbivar.f \
+Xbj.f \
+Xbuckly.f \
+Xcens.f \
+Xchol.f \
+Xcoeff.f \
+Xcoxreg.f \
+Xdata1.f \
+Xdata2.f \
+Xdatain.f \
+Xdatreg.f \
+Xem.f \
+Xemalgo.f \
+Xfactor.f \
+Xgamma.f \
+Xgehan.f\
+Xgrdprb.f \
+Xkmadj.f\
+Xkmdif.f\
+Xkmestm.f \
+Xkmprnt.f\
+Xlrank.f \
+Xmatinv.f \
+Xmulvar.f \
+Xpchisq.f \
+Xpeto.f \
+Xplestm.f \
+Xpwlcxn.f \
+Xr3.f \
+Xr4.f \
+Xr5.f \
+Xr6.f \
+Xran1.f \
+Xrearrn.f \
+Xregres.f \
+Xrmills.f \
+Xschmit.f \
+Xsort1.f \
+Xsort2.f \
+Xspearho.f \
+Xsprman.f \
+Xstat.f \
+Xsumry.f \
+Xsyminv.f \
+Xtie.f \
+Xtwokm.f \
+Xtwost.f \
+Xunivar.f \
+Xunpack.f \
+Xwlcxn.f \
+Xxdata.f \
+Xxvar.f \
+X****************************************************************************
+X******************************** gal1.dat **********************************
+X****************************************************************************
+X   0  28.5
+X   0  26.9
+X  -1  29.7
+X  -1  28.1
+X   0  30.1
+X  -1  27.6
+X****************************************************************************
+X******************************** gal1.com **********************************
+X****************************************************************************
+Xgal1.dat
+XIR Luminosities of Galaxies
+X1
+X1
+XIR
+X1
+X1
+X25.0
+X5
+X2.0
+X1
+Xgal1.out
+X****************************************************************************
+X********************************* gal1.out *********************************
+X****************************************************************************
+X    
+X    
+X        KAPLAN-MEIER ESTIMATOR
+X    
+X        TITLE : IR Luminosities of Galaxies                                                     
+X    
+X        DATA FILE : gal1.dat 
+X    
+X        VARIABLE : IR       
+X    
+X    
+X        # OF DATA POINTS :   6 # OF UPPER LIMITS :   3
+X    
+X    
+X          VARIABLE RANGE      KM ESTIMATOR   ERROR
+XFROM    0.000   TO   26.900       1.000
+XFROM   26.900   TO   28.500       0.375       0.213
+X       27.600 C 
+X       28.100 C 
+XFROM   28.500   TO   30.100       0.167       0.152
+X       29.700 C 
+XFROM   30.100   ONWARDS           0.000       0.000
+X    
+X
+X      SINCE THERE ARE LESS THAN 4 UNCENSORED POINTS,
+X      NO PERCENTILES WERE COMPUTED.
+X    
+X        MEAN=    27.767 +/- 0.515
+X 
+X  
+X        DIFFERENTIAL KM ESTIMATOR
+X        BIN CENTER          D
+X  
+X         26.000          3.750
+X         28.000          1.250
+X         30.000          1.000
+X         32.000          0.000
+X         34.000          0.000
+X                       -------
+X          SUM =          6.000
+X  
+X (D GIVES THE ESTIMATED DATA POINTS IN EACH BIN)
+X        INPUT DATA FILE: gal1.dat 
+X        CENSORSHIP     X 
+X               0    28.500
+X               0    26.900
+X              -1    29.700
+X              -1    28.100
+X               0    30.100
+X              -1    27.600
+X******************************************************************************
+X********************************** gal2.dat **********************************
+X******************************************************************************
+X   0   0      28.5 
+X   0   0      26.9
+X   0  -1      29.7
+X   0  -1      28.1
+X   0   0      30.1 
+X   0  -1      27.6 
+X   1  -1      29.0
+X   1   0      29.0  
+X   1   0      30.2 
+X   1  -1      32.4
+X   1   0      28.5
+X   1   0      31.1   
+X   2   0      31.9  
+X   2  -1      32.3 
+X   2   0      30.4
+X   2   0      31.8
+X******************************************************************************
+X********************************** gal2.com **********************************
+X******************************************************************************
+Xgal2.dat
+XIR Luminosities of Galaxies
+X1
+X1
+XIR
+X3
+X0   1   2
+X0   1   0   1      
+X0
+X0
+XNormal
+XStarburst
+Xgal2.out
+X******************************************************************************
+X******************************** gal2.out ************************************
+X******************************************************************************
+X           ******* TWO SAMPLE TEST ******
+X    
+X        TITLE : IR Luminosities of Galaxies                                                     
+X    
+X        DATA SET : gal2.dat 
+X        VARIABLE : IR       
+X        TESTED GROUPS ARE Normal    AND Starburst
+X     
+X      # OF DATA POINTS :  12, # OF UPPER LIMITS :   5
+X      # OF DATA POINTS IN GROUP I  :   6
+X      # OF DATA POINTS IN GROUP II :   6
+X     
+X        GEHAN`S GENERALIZED WILCOXON TEST -- PERMUTATION VARIANCE
+X     
+X          TEST STATISTIC        =       1.652
+X          PROBABILITY           =       0.0986
+X
+X     
+X        GEHAN`S GENERALIZED WILCOXON TEST -- HYPERGEOMETRIC VARIANCE
+X     
+X          TEST STATISTIC        =       1.687
+X          PROBABILITY           =       0.0917
+X
+X     
+X        LOGRANK TEST 
+X     
+X          TEST STATISTIC        =       1.814
+X          PROBABILITY           =       0.0696
+X
+X     
+X        PETO & PETO GENERALIZED WILCOXON TEST
+X     
+X          TEST STATISTIC        =       1.730
+X          PROBABILITY           =       0.0837
+X
+X     
+X        PETO & PRENTICE GENERALIZED WILCOXON TEST
+X     
+X          TEST STATISTIC        =       1.706
+X          PROBABILITY           =       0.0881
+X
+X    
+X    
+X        KAPLAN-MEIER ESTIMATOR
+X    
+X    
+X        DATA FILE : gal2.dat 
+X    
+X        VARIABLE : Normal   
+X    
+X    
+X        # OF DATA POINTS :   6 # OF UPPER LIMITS :   3
+X    
+X    
+X          VARIABLE RANGE      KM ESTIMATOR   ERROR
+XFROM    0.000   TO   26.900       1.000
+XFROM   26.900   TO   28.500       0.375       0.213
+X       27.600 C 
+X       28.100 C 
+XFROM   28.500   TO   30.100       0.167       0.152
+X       29.700 C 
+XFROM   30.100   ONWARDS           0.000       0.000
+X    
+X
+X      SINCE THERE ARE LESS THAN 4 UNCENSORED POINTS,
+X      NO PERCENTILES WERE COMPUTED.
+X    
+X        MEAN=    27.767 +/- 0.515
+X 
+X    
+X    
+X        KAPLAN-MEIER ESTIMATOR
+X    
+X    
+X        DATA FILE : gal2.dat 
+X    
+X        VARIABLE : Starburst
+X    
+X    
+X        # OF DATA POINTS :   6 # OF UPPER LIMITS :   2
+X    
+X    
+X          VARIABLE RANGE      KM ESTIMATOR   ERROR
+XFROM    0.000   TO   28.500       1.000
+XFROM   28.500   TO   29.000       0.600       0.219
+X       29.000 C 
+XFROM   29.000   TO   30.200       0.400       0.219
+XFROM   30.200   TO   31.100       0.200       0.179
+XFROM   31.100   ONWARDS           0.000       0.000
+X       32.400 C 
+X    
+X        PERCENTILES    
+X         75 TH     50 TH     25 TH
+X         17.812    28.750    29.900
+X    
+X        MEAN=    29.460 +/- 0.460
+X 
+X******************************************************************************
+X********************************* gal3.dat ***********************************
+X******************************************************************************
+X   0      27.2      28.5 
+X   0      25.4      26.9
+X  -1      27.2      29.7
+X  -1      25.9      28.1  
+X   0      28.8      30.1 
+X  -1      25.3      27.6
+X  -1      26.5      29.0   
+X   0      27.1      29.0  
+X   0      28.9      30.2 
+X  -1      29.9      32.4
+X   0      27.0      28.5
+X   0      29.8      31.1 
+X   0      30.1      31.9   
+X  -1      29.7      32.3  
+X   0      28.4      30.4 
+X   0      29.3      31.8
+X******************************************************************************
+X******************************** gal3.com ************************************
+X******************************************************************************
+XOptical-Infrared Relation
+Xgal3.dat
+X1   1   2
+X1   4 
+XOptical   Infrared
+X0
+Xgal3.out
+X1.0E-5
+X0.0       0.0       0.0       0.0
+X50
+X******************************************************************************
+X******************************* gal3.out *************************************
+X******************************************************************************
+X     
+X      CORRELATION AND REGRESSION PROBLEM
+X      TITLE IS  Optical-Infrared Relation                                                       
+X     
+X      DATA FILE IS gal3.dat 
+X     
+X     
+X      INDEPENDENT       DEPENDENT
+X        Optical   AND    Infrared
+X     
+X     
+X      NUMBER OF DATA POINTS :    16
+X      UPPER LIMITS IN  Y    X    BOTH   MIX
+X                       6    0       0    0
+X     
+X    
+X     CORRELATION TEST BY COX PROPORTIONAL HAZARD MODEL
+X    
+X       GLOBAL CHI SQUARE =   18.458 WITH 
+X               1 DEGREES OF FREEDOM
+X       PROBABILITY    =    0.0000
+X    
+X          
+X    LINEAR REGRESSION BY PARAMETRIC EM ALGORITHM
+X          
+X       INTERCEPT COEFF    :  0.1703  +/-  2.2356
+X       SLOPE COEFF 1      :  1.0519  +/-  0.0793
+X       STANDARD DEVIATION :  0.3687
+X       ITERATIONS         : 27
+X          
+X
+X     
+X***************************************************************************** 
+X****************************** Bug Report ***********************************
+X*****************************************************************************
+X 
+X     We strongly encourage users to fill out and send us the attached
+Xreport following significant use of the package.  This is especially 
+Ximportant if specific bugs or problems are found.
+X 
+X
+XName and Address:
+X 
+XPrograms Used: 
+X
+X
+X
+XGeneral Comments:
+X
+X
+X
+X
+X
+X
+X 
+XSpecific Questions, Suggestions, or Bugs:
+X
+X
+X
+X
+X
+X
+X 
+XWould you like to see the package expanded?  
+X 
+X___  Expand Cox proportional hazard model, and add test of its applicability.
+X___  Add Type I censoring (all upper limits = constant) methods.
+X___  Add tests specific to Gaussian distributed data (mean and sigma, 
+X     chi-squared and K-S goodness-of-fit tests, etc.).
+X___  Add tests relating to truncation (e.g. data missing due to
+X     flux limits) as well as censoring (e.g. upper limits due to
+X     flux limits).
+X___  Other ideas?
+X 
+XPlease email to : code@stat.psu.edu
+X
+X
+X
+X
+X
