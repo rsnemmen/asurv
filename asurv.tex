@@ -1,1639 +1,1639 @@
-X\documentstyle[11pt] {report}
-X\marginparwidth 0pt
-X\oddsidemargin  0pt
-X\evensidemargin  0pt
-X\marginparsep 0pt
-X\topmargin=0.0in
-X\textwidth=6.25in
-X\textheight=8.25in
-X\pagestyle{plain}
-X\parskip=5pt
-X\parindent=30pt
-X
-X\begin{document}
-X\thispagestyle{empty}
-X
-X\centerline{\Huge\bf  ASURV}
-X\bigskip
-X\centerline{\Huge\bf Astronomy SURVival Analysis }
-X
-X\bigskip
-X\bigskip
-X\bigskip
-X\bigskip
-X\centerline{\LARGE\bf  A Software Package for Statistical Analysis of }
-X
-X\bigskip
-X\centerline{\LARGE\bf  Astronomical Data Containing Nondetections}
-X
-X\bigskip
-X\bigskip
-X\bigskip
-X\bigskip
-X\begin{tabbing}
-X      xxxxxxxxxxx\= \kill
-X                 \>xxxxxxxxxxxxxxx\=   \kill
-X
-X      {\Large\bf Developed by: } \\
-X    \> \\
-X                 \> {\Large\bf Takashi Isobe } (Center for Space Research, MIT)  \\
-X
-X    \> \\
-X           \> {\Large\bf Michael LaValley } (Dept. of Statistics, Penn State)\\
-X
-X    \> \\
-X                 \>{\Large\bf Eric Feigelson  }(Dept. of Astronomy \& Astrophysics, Penn State) \\
-X    \> \\
-X    \> \\
-X    \> \\
-X
-X
-X       {\Large\bf Available from: }   \\
-X                 \>                   \\
-X                 \> code@stat.psu.edu \\
-X                 \>                   \\
-X                 \>or,                \\
-X                 \>                   \\
-X                 \> Eric Feigelson     \\
-X                 \> Dept. of Astronomy \& Astrophysics  \\
-X                 \> Pennsylvania State University \\
-X                 \> University Park PA  16802 \\
-X                 \> (814) 865-0162 \\
-X                 \>  Email:  edf@astro.psu.edu  (Internet)\\
-X\end{tabbing}
-X\bigskip
-X\bigskip
-X\bigskip
-X\bigskip
-X\bigskip
-X\centerline{\Large\bf Rev. 1.2, Summer 1992.}
-X\newpage
-X
-X
-X\centerline{\Large\bf TABLE OF CONTENTS}
-X\bigskip
-X\bigskip
-X			   
-X\noindent{\large\bf 
-X\begin{center}
-X\begin{verbatim}
-X       1 Introduction ............................................  3
-X
-X       2 Overview of ASURV .......................................  4 
-X            2.1  Statistical Functions and Organization ..........  4 
-X            2.2  Cautions and caveats ............................  6
-X       
-X       3 How to run ASURV ........................................  9
-X            3.1  Data Input Formats ..............................  9
-X            3.2  KMESTM instructions and example ................. 10 
-X            3.3  TWOST instructions and example .................. 11 
-X            3.4  BIVAR instructions and example .................. 13 
-X       
-X       4 Acknowledgements ........................................ 21
-X       
-X       Appendices ................................................ 22
-X            A1  Overview of survival analysis .................... 22 
-X            A2  Annotated Bibliography on Survival Analysis ...... 23 
-X            A3  How Rev 1.2 is Different From Rev 0.0 ............ 26
-X            A4  Errors Removed in Rev 1.1 ........................ 28
-X            A5  Errors Removed in Rev 1.2 ........................ 28
-X            A6  Obtaining and Installing ASURV ................... 28
-X            A7  User Adjustable Parameters ....................... 30
-X            A8  List of subroutines used in ASURV Rev 1.2 ........ 32
-X\end{verbatim}
-X\end{center}
-X}
-X
-X
-X\bigskip
-X
-X\bigskip
-X
-X\bigskip
-X
-X\centerline{\Large\bf NOTE}
-X
-X\begin{small}
-X
-XThis program and its documentation are provided `AS IS' without
-Xwarranty of any kind.  The entire risk as the results and performance
-Xof the program is assumed by the user.  Should the program prove
-Xdefective, the user assume the entire cost of all necessary correction.
-XNeither the Pennsylvania State University nor the authors of the program
-Xwarrant, guarantee or make any representations regarding use of, or the
-Xresults of the use of the program in terms of correctness, accuracy 
-Xreliability, or otherwise.  Neither shall they be liable for any direct or
-Xindirect damages arising out of the use, results of use or inability to
-Xuse this product, even if the University has been advised of the possibility
-Xof such damages or claim.  The use of any registered Trademark depicted
-Xin this work is mere ancillary; the authors have no affiliation with
-Xor approval from these Trademark owners.
-X
-X\end{small}
-X
-X\newpage
-X
-X\centerline{\Large\bf 1  Introduction} 
-X
-X    Observational astronomers frequently encounter the situation where they 
-Xobserve a particular property (e.g. far infrared emission, calcium line 
-Xabsorption, CO emission) of a previously defined sample of objects, but 
-Xfail to detect all of the objects.  The data set then contains nondetections as 
-Xwell as detections, preventing the use of simple and familiar statistical 
-Xtechniques in the analysis.   
-X 
-X     A number of astronomers have recently recognized the existence 
-Xof statistical methods, or have derived similar methods, to deal with these 
-Xproblems.  The methods are collectively
-Xcalled `survival analysis' and nondetections are called 
-X`censored' data points.  {\sl\bf ASURV} is a menu-driven stand-alone computer
-Xpackage designed  to assist astronomers in using methods from survival 
-Xanalysis.  Rev. 1.2 of {\sl\bf ASURV}  provides the maximum-likelihood
-Xestimator of the censored distribution,
-Xseveral two-sample tests, correlation tests and linear regressions  as
-Xdescribed in our papers in the {\it\bf Astrophysical Journal} (Feigelson 
-Xand Nelson, 1985; Isobe, Feigelson, and Nelson, 1986). 
-X
-X     No statistical procedure can magically recover information that was
-Xnever measured at the telescope.  However, there is frequently important 
-Xinformation implicit in the failure to detect some objects which can be
-Xpartially recovered under reasonable assumptions. We purposely provide 
-Xa variety of statistical tests - each 
-Xbased on different models of where  upper limits truly lie - so that the
-Xastronomer can judge the importance of the different assumptions.  
-XThere are also reasons for {\bf not} applying these methods.  We describe
-Xsome of their known limitations in {\bf \S  2.2}.
-X
-X     Because astronomers are frequently unfamiliar with the field of 
-Xstatistics, we devote Appendix {\bf  \S A1} to background 
-Xmaterial.  Both general issues concerning censored data and specifics 
-Xregarding the methods used in {\sl\bf ASURV} are discussed.  More 
-Xmathematical presentations can be found in the references given in Appendix
-X{\bf \S A2}. Users of Rev 0.0, distributed between 1988 and 1991,  are 
-Xstrongly encouraged to 
-Xread Appendices {\bf \S A3-A5} to be familiar with the changes made in the 
-Xpackage.  Appendices {\bf \S A6-A8} are needed only by code installers and
-Xthose needing to modify the I/O or array sizes.  
-XUsers wishing to get right down to work should read  {\bf \S 2.1} to
-Xfind the appropriate program, and follow  the instructions in {\bf \S 3}. 
-X
-X\bigskip
-X\bigskip
-X\centerline{\Large\bf Acknowledging ASURV}
-X
-X     We would appreciate that studies using this package include phrasing
-Xsimilar to `... using {\sl\bf ASURV} Rev 1.2 ({\bf B.A.A.S.} reference),
-Xwhich implements the methods presented in ({\bf Ap. J.} reference)', where
-Xthe {\bf B.A.A.S.} reference is the most recent published {\sl\bf ASURV}
-XSoftware Report (Isobe and Feigelson 1990; LaValley, Isobe and Feigelson 
-X1992) and the {\bf Ap. J.} reference is Feigelson and Nelson (1985) for
-Xunivariate problems and Isobe,Feigelson and Nelson (1986) for bivariate
-Xproblems.  Other general works appropriate for referral include the review
-Xof survival methods for astronomers by Schmitt (1985), and the survival 
-Xanalysis monographs by Miller (1981) or Lawless (1982).
-X
-X\newpage
-X\centerline{\Large\bf 2 Overview of ASURV}
-X    
-X       
-X\medskip
-X\noindent{\large\bf 2.1 Statistical Functions and Organization}
-X
-X     The statistical methods for dealing with censored data might be
-Xdivided into a 2x2 grid: parametric $vs.$ nonparametric, and univariate $vs.$
-Xbivariate.  Parametric methods assume that the censored survival times
-Xare drawn from a parent population with a known distribution function ($e.g.$
-XGaussian, exponential), and this is the principal assumption of survival
-Xmodels for industrial reliability.  Nonparametric models make 
-Xno assumption about the 
-Xparent population, and frequently rely on maximum-likelihood techniques. 
-XUnivariate methods are devoted to determining the characteristics of the
-Xpopulation from which the censored sample is drawn, and comparing such 
-Xcharacteristics for two or more censored samples.  Bivariate methods
-Xmeasure whether the censored property of the sample is correlated with 
-Xanother property of the objects and, if so, to perform a regression  that 
-Xquantifies the relationship between the two variables.
-X 
-X     We have chosen to concentrate on nonparametric models, since  the 
-Xunderlying distribution of astronomical populations is usually unknown. 
-XThe linear regression methods however, are either fully parametric 
-X($e.g.$ EM algorithm regression) or semi-parametric
-X($e.g.$ Cox regression, Buckley-James regression). 
-XMost of the methods are described in more detail in the astronomical 
-Xliterature by Schmitt (1985), Feigelson and Nelson (1985) and Isobe et al. 
-X(1986).  The generalized Spearman's rho utilized in {\sl\bf ASURV} 
-XRev 1.2 is derived by Akritas (1990).
-X
-X     The program within {\sl\bf ASURV} giving univariate methods is 
-X{\sl\bf UNIVAR}.  Its first subprogram is {\sl\bf KMESTM}, giving the 
-XKaplan-Meier estimator for the distribution function of a randomly 
-Xcensored sample.  First derived in 
-X1958, it lies at the root of non-parametric survival analysis.  It is the
-Xunique, self-consistent, generalized maximum-likelihood estimator for the
-Xpopulation from which the sample was drawn. When formulated in cumulative 
-Xform, it has analytic asymptotic (for large N) error bars. The median is
-Xalways well-defined, though the mean is not if the lowest point in the 
-Xsample is an upper limit.  It is identical to the differential 
-X`redistribute-to-the-right' algorithm, independently derived by Avni et al.
-X(1980) and others, but the differential form does not have simple analytic 
-Xerror analysis.  
-X
-X     The second univariate program is {\sl\bf TWOST}, giving a variety 
-Xof ways to test whether two censored samples are drawn from the same parent
-Xpopulation.  They are mostly generalizations of standard tests for
-Xuncensored data, such as the Wilcoxon and logrank nonparametric two-sample
-Xtests.  They differ in how the censored data are weighted or `scored' in
-Xcalculating the statistic.  Thus each is more sensitive to differences at
-Xone end or the other of the distribution.  The Gehan and logrank tests are
-Xwidely used in biometrics, while some of the others are not.  The tests 
-Xoffered in Rev 1.2 differ significantly from those offered in Rev 0.0 and
-Xdetails of the changes are in {\bf \S A3}.
-X
-X     {\sl\bf BIVAR} provides methods for bivariate data,  giving three 
-Xcorrelation tests and three linear regression analyses. Cox hazard model 
-X(correlation test), EM algorithm, and Buckley-James method (linear 
-Xregressions) can treat several independent variables if the dependent 
-Xvariable contains only one kind of censoring ($i.e.$ upper or lower limits). 
-XGeneralized Kendall's tau (correlation  test), Spearman's rho 
-X(correlation test), and Schmitt's binned linear regression can treat 
-Xmixed censoring including censoring in the independent variable, but 
-Xcan have only one independent variable.  
-X
-X	{\sl\bf COXREG} computes the correlation probabilities by Cox's 
-Xproportional hazard model and {\sl\bf BHK} computes the generalized 
-XKendall's tau.  {\sl\bf SPRMAN} computes correlation probabilities 
-Xbased on a generalized version of Spearman's rank order correlation 
-Xcoefficient.  {\sl\bf EM} calculates linear regression 
-Xcoefficients by  the EM algorithm assuming a normal distribution of
-Xresiduals, {\sl\bf BJ} calculates the Buckley-James regression with 
-XKaplan-Meier residuals, and {\sl\bf TWOKM} calculates the binned 
-Xtwo-dimensional Kaplan-Meier distribution and  associated linear 
-Xregression coefficients derived by Schmitt (1985).  A bootstrapping 
-Xprocedure provides error analysis for Schmitt's method in Rev 1.2.  The 
-Xcode for EM algorithm follows that given by 
-XWolynetz (1979) except minor changes. The code for Buckley-James method 
-Xis adopted from Halpern (Stanford Dept. of Statistics; private 
-Xcommunication).  Code for the Kaplan-Meier estimator and some of the 
-Xtwo-sample tests was adapted from that given in Lee (1980).  {\sl\bf COXREG}, 
-X{\sl\bf BHK}, {\sl\bf SPRMAN}, and the {\sl\bf TWOKM} code were developed 
-Xentirely by us.
-X   
-X     Detailed remarks on specific subroutines can be found in the comments at 
-Xthe beginning of each subroutine.  The reference for the source of the code 
-Xfor the subroutine is given there, as well as an annotated list of the 
-Xvariables used in the subroutine.
-X
-X\newpage
-X\noindent{\Large\bf 2.2  Cautions and Caveats}
-X 
-X     The Kaplan-Meier estimator works with any underlying distribution
-X($e.g.$ Gaussian, power law, bimodal), but only if the censoring is `random'.
-XThat is, the probability that the measurement of an object is censored can
-Xnot depend on the value of the censored variable.   At first glance, this
-Xmay seem to be inapplicable to most astronomical problems:  we detect the
-Xbrighter objects in a sample, so the distribution of upper limits always 
-Xdepends on brightness.  However, two factors often serve to randomize 
-Xthe censoring distribution.  First, the censored variable may not be 
-Xcorrelated with the variable by which the sample was initially 
-Xidentified.  Thus, infrared observations of a sample of radio bright 
-Xobjects will be randomly censored if the radio and infrared emission are
-Xunrelated to each other.  Second, astronomical objects in a sample usually
-Xlie at different distances, so that brighter objects are not always the 
-Xmost luminous.  In cases where the variable of interest is censored at 
-Xa particular value ($e.g.$ flux, spectral line equivalent width, stellar 
-Xrotation rate)  rather than randomly censored, then parametric methods 
-Xappropriate to `Type 1' censoring should be used.  These are described by 
-XLawless (1982) and Schneider (1986), but are not included in this package.
-X 
-X     Thus, the censoring mechanism of each study MUST be understood  
-Xindividually to judge whether the censoring is or is not likely to be  
-Xrandom.  A good example of this judgment process is provided by 
-XMagri et al. (1988).  The appearance of the data, even if the upper limits 
-Xare clustered at one end of the distribution, is NOT a reliable measure. A 
-Xfrequent (if philosophically distasteful) escape from the difficulty of
-Xdetermining the nature of the censoring in a given experiment is to define
-Xthe population of interest to be the observed sample. The Kaplan-Meier
-Xestimator then always gives a valid redistribution of the upper limits,
-Xthough the result may not be applicable in wider contexts. 
-X
-X     The two-sample tests are somewhat less restrictive than the
-XKaplan-Meier estimator, since they seek only to compare two samples rather
-Xthan  determine the true underlying distribution.  Because of this, the
-Xtwo-sample tests do not require that the censoring patterns of the two samples 
-Xare random.  The two versions of the Gehan test in {\sl\bf ASURV} assume 
-Xthat the censoring patterns of the two samples are the same, but 
-Xthe version with hypergeometric variance is more reliable in case of 
-Xdifferent censoring patterns.  The logrank test results appear to be 
-Xcorrect as long as the censoring patterns are not very different.  
-XPeto-Prentice seems to be the test least affected by differences in 
-Xthe censoring patterns.  There is little known about the limitations of 
-Xthe Peto-Peto test. These issues are discussed in Prentice and Marek (1979), 
-XLatta (1981) and Lawless (1982). 
-X
-X     Two of the bivariate correlation coefficients, generalized Kendall's tau 
-Xand Cox regression, are both known to be inaccurate when many tied values
-Xare present in the data.  Ties are particularly common when the data is
-Xbinned.  Caution should be used in these cases.  It is not known how the
-Xthird correlation method, generalized Spearman's rho,  responds to ties in the
-Xdata.  However, there is no reason to believe that it is more accurate than
-XKendall's tau in this case, and it should also used be with caution in the 
-Xpresence of tied values.
-X
-X     Cox regression, though widely used in biostatistical  applications,
-Xformally applies only if the `hazard rate' is constant; that is,  the 
-Xcumulative distribution function of the censored variable falls 
-Xexponentially with increasing values.  Astronomical luminosity functions,
-Xin contrast, are frequently modeled by power law distributions.  It is not 
-Xclear whether or not the results of a Cox regression are significantly
-Xaffected by this difference.
-X
-X     There are a variety of limitations to the three linear regression
-Xmethods -- {\sl\bf EM}, {\sl\bf BJ}, and {\sl\bf TWOKM} -- presented here.   
-XFirst, only Schmitt's binned method implemented in {\sl\bf TWOKM} works when 
-Xcensoring is present in both variables.  Second, {\sl\bf\ EM} requires that 
-Xthe  residuals about the fitted line follow a Gaussian distribution.  
-X{\sl\bf BJ} and {\sl\bf TWOKM} are less restrictive, requiring only that the 
-Xcensoring distribution about the fitted line is random.  Both we and 
-XSchneider (1986) find little difference in the regression 
-Xcoefficients derived from these two methods.  Third, the Buckley-James
-Xmethod has a defect in that the final solution occasionally oscillates
-Xrather than converges smoothly.  Fourth, there is considerable uncertainty 
-Xregarding the error analysis of the regression coefficients of all three 
-Xmodels.  {\sl\bf\ EM} gives analytic formulae based on asymptotic normality, 
-Xwhile Avni and Tananbaum (1986) numerically calculate and examine the 
-Xlikelihood surface.  BJ gives an analytic formula for the slope only, but it 
-Xlies on a weak theoretical foundation.  We now provide Schmitt's bootstrap 
-Xerror analysis for {\sl\bf TWOKM}, although this may be subject to high 
-Xcomputational expense for large data sets.  Users may thus wish to run 
-Xall methods and evaluate the uncertainty with caution.  Fifth, Schmitt's
-Xbinned regression implemented in {\sl\bf TWOKM} has a number of drawbacks
-Xdiscussed by Sadler et al. (1989), including slow or failed convergence
-Xto the two-dimensional Kaplan-Meier distribution, arbitrary choice of
-Xbin size and origin, and problems if either too many or too few bins are
-Xselected.  In our judgment, the most reliable linear regression method
-Xmay be the Buckley-James regression, and we suggest that Schmitt's regression
-Xbe reserved for problems with censoring present in both variables. 
-X
-X    If we consider the field of survival analysis from a broader
-Xperspective, we note a number of deficiencies with respect to censored 
-Xstatistical problems in astronomy (see Feigelson, 1990).  Most importantly, 
-Xsurvival analysis assumes the upper limits in a given experiment are 
-Xprecisely known, while in astronomy they frequently represent n times 
-Xthe RMS noise level in the experimental detector, where n = 2, 3, 5 
-Xor whatever.  {\bf It is possible that all existing survival methods will
-Xbe inaccurate for astronomical data sets containing many points very close
-Xto the detection limit.}  Methods that combine the virtues of survival
-Xanalysis (which treat censoring) and measurement error models (which
-Xtreat known measurement errors in both uncensored and censored points)
-Xare needed. See the discussion by Bickel and Ritov (1992) on this important
-Xmatter.  A related deficiency is the absence of 
-Xweighted means or regressions associated with censored samples.
-XSurvival analysis also has not yet produced any true multivariate 
-Xtechniques, such as a Principal Components Analysis that permits 
-Xcensoring.  There also seems to be a  dearth of nonparametric 
-Xgoodness-of-fit tests like the Kolmogorov-Smirnov test.
-X
-X    Finally, we note that this package - {\sl\bf ASURV} - is not unique. 
-XNearly a dozen software packages for analyzing censored data have been 
-Xdeveloped (Wagner and Meeker 1985).  Four are part of large multi-purpose 
-Xcommercial statistical software systems:  SAS, SPSS, BMDP, and GLIM.  
-XThese packages are available on many university central computers. We have 
-Xfound BMDP to be the most useful for astronomers (see Appendices to 
-XFeigelson and Nelson 1985, Isobe et al. 1986 for instructions on its use).   
-XIt provides most of the functions in {\sl\bf KMESTM} and {\sl\bf TWOST} 
-Xas well as a full Cox regression, but no linear regressions. Other packages 
-X(CENSOR, DASH, LIMDEP, STATPAC, STAR, SURVAN, SURVCALC, SURVREG) were written 
-Xat various universities, medical institutes, publishing houses and industrial 
-Xlabs;  they have not been evaluated by us. 
-X 
-X
-X\newpage
-X\centerline{\Large\bf 3  How to Run ASURV}
-X
-X\medskip
-X\noindent{\large\bf 3.1  Data Input Formats}
-X 
-X     {\sl\bf ASURV} is designed to be menu-driven.  There are two basic input
-Xstructures:  a data file, and a command file.  The data file is assumed to
-Xreside on disk.  For each observed object, it contains the measured value 
-Xof the variable of interest and an indicator as to whether it is detected
-Xor not.  Listed below are the possible values that the {\bf censoring indicator
-X} can take on.  Upper limits are most common in astronomical applications and
-Xlower limits are most common in lifetime applications. 
-X
-X\begin{verbatim}
-X
-X For univariate data:    1 : Lower Limit
-X                         0 : Detection
-X                        -1 : Upper Limit
-X
-X For bivariate data:     3 : Both Independent and Dependent Variables are 
-X                               Lower Limits
-X                         2 : Only independent Variable is a Lower Limit
-X                         1 : Only Dependent Variable is a Lower Limit
-X                         0 : Detected Point
-X                        -1 : Only Dependent Variable is an Upper Limit
-X                        -2 : Only Independent Variable is an Upper Limit
-X                        -3 : Both Independent and Dependent Variables are
-X                               Upper Limits
-X
-X\end{verbatim}
-X
-X     The command file may either reside on disk, but is more frequently
-Xgiven interactively at the terminal.
-X
-X     For the univariate program {\sl\bf UNIVAR}, the format of the data file 
-Xis determined in the subroutine {\sl\bf DATAIN}.  It is currently set 
-Xat 10*(I4,F10.3) for {\sl\bf KMESTM}, where each column represents a 
-Xdistinct subsample.  For {\sl\bf TWOST}, it is set at I4,10*(I4,F10.3), 
-Xwhere the first column gives the sample identification number. Table 1 
-Xgives an example of a {\sl\bf TWOST} data file called 'gal2.dat'. It 
-Xshows a hypothetical study where six normal galaxies, six starburst galaxies 
-Xand six Seyfert galaxies were observed with the IRAS satellite. The variable 
-Xis the log of the 60-micron luminosity.  The problem we address are the
-Xestimation of the luminosity functions of each sample, and a determination 
-Xwhether they are different from each other at a statistically significant 
-Xlevel.  Command file input formats are given in subroutine {\sl\bf UNIVAR}, 
-Xand inputs are parsed in subroutines {\sl\bf DATA1} and {\sl\bf DATA2}.  All 
-Xdata input and output formats can be changed by the user as described in 
-Xappendix {\bf \S A7}.
-X
-X     For the bivariate program {\sl\bf BIVAR}, the data file format is 
-Xdetermined by the subroutine {\sl\bf DATREG}.  It is currently set 
-Xat I4,10F10.3.  In most cases, only two variables are used with input 
-Xformat I4,2F10.3.  Table 2 shows an example of a bivariate censored problem. 
-X Here one wishes to investigate possible relations between infrared and 
-Xoptical luminosities in a sample of galaxies. {\sl\bf BIVAR} command file 
-Xinput formats are sometimes a bit complex. The examples below illustrate 
-Xvarious common cases.  The formats for the basic command inputs are given in 
-Xsubroutine {\sl\bf BIVAR}.  Additional inputs for the Spearman's rho 
-Xcorrelation, EM algorithm, Buckley-James method, and Schmitt's method are 
-Xgiven in subroutines {\sl\bf R3}, {\sl\bf R4}, {\sl\bf R5}, and {\sl\bf R6} 
-Xrespectively.
-X 
-X     The current version of {\sl\bf ASURV} is set up for data sets with 
-Xfewer than 500 data points and occupies about 0.46 MBy of core memory. 
-XFor problems with more than 500 points, the parameter values in the 
-Xsubroutines {\sl\bf UNIVAR} and {\sl\bf BIVAR} must be changed as described 
-Xin appendix {\bf\S A7}.  Note that for  the generalized Kendall's tau 
-Xcorrelation coefficient, and possibly other programs,  the computation time 
-Xgoes up as a high power of the number of data points. 
-X
-X     {\sl\bf ASURV} has been designed to work with data that can 
-Xcontain either upper limits (right censoring) or lower limits (left 
-Xcensoring).  Most of these procedures assume restrictions on the 
-Xtype of censoring present in the data.  Kaplan-Meier estimation and 
-Xthe two-sample tests presented here can work with data that has either 
-Xupper limits or lower limits, but not with data containing both.  Cox 
-Xregression, the EM algorithm, and Buckley-James regression can use 
-Xseveral independent variables if the dependent variable 
-Xcontains only one type of censored point (it can be either upper or lower 
-Xlimits).  Kendall's tau, Spearman's rho, and Schmitt's binned regression can 
-Xhave mixed censoring, including censoring in the independent variable, but 
-Xthey can only have one independent variable.
-X
-X\bigskip
-X\bigskip
-X\noindent{\large\bf 3.2  KMESTM Instructions and Example}
-X 
-X     Suppose one wishes to see the Kaplan-Meier estimator for the infrared
-Xluminosities of the normal galaxies in Table 1. If one runs {\sl\bf ASURV}
-Xinteractively from the terminal, the conversation looks as follows:
-X
-X\begin{verbatim}
-X
-X   Data type                :  1         [Univariate data]
-X   Problem                  :  1         [Kaplan-Meier]
-X   Command file?            :  N         [Instructions from terminal]
-X   Data file                :  gal1.dat  [up to 9 characters]
-X   Title                    :  IR Luminosities of Galaxies
-X                                         [up to 80 characters]
-X   Number of variables      :  1         [if several variables in data file] 
-X   Name of variable         :  IR        [ up to 9 characters]
-X   Print K-M?               :  Y
-X   Print out differential
-X       form of K-M?         :  Y
-X                               25.0      [Starting point is set to 25]
-X                               5         [5 bins set]
-X                               2.0       [Bin size is set equal to 2]
-X   Print original data?     :  Y
-X   Need output file?        :  Y
-X   Output file              :  gal1.out  [up to 9 characters]
-X   Other analysis?          :  N
-X
-X\end{verbatim}
-XIf an output file is not specified, the results will be sent to the 
-Xterminal screen.
-X 
-X     If a command file residing on disk is preferred, run {\sl\bf ASURV}
-Xinteractively as above, specifying 'Y' or 'y' when asked if a command file is
-Xavailable. The command file would then look as follows:
-X\begin{verbatim}
-X 
-X   gal1.dat                     ... data file                      
-X   IR Luminosities of Galaxies  ... problem title                         
-X   1                            ... number of variables    
-X   1                            ... which variable?
-X   IR                           ... name of the variable        
-X   1                            ... printing K-M (yes=1, no=0) 
-X   1                            ... printing differential K-M (yes=1, no=0)
-X   25.0                         ... starting point of differential K-M
-X   5                            ... number of bins
-X   2.0                          ... bin size
-X   1                            ... printing data (yes=1, no=0)
-X   gal1.out                     ... output file              
-X
-X\end{verbatim}
-XAll inputs are read starting from the first column.  
-X
-X     The resulting output is shown in Table 3.  It shows, for example, 
-Xthat the estimated normal galaxy cumulative IR luminosity  function is 0.0
-Xbelow log(L) = 26.9, 0.63 $\pm$ 0.21 for 26.9 $<$  log(L) $<$ 28.5, 
-X0.83 $\pm$ 0.15 for 28.5 $<$ log(L) $<$ 30.1, and 1.00 above log(L) = 30.1.
-XThe estimated mean for the sample is 27.8 $\pm$ 0.5.  The 'C' beside two 
-Xvalues indicates these are nondetections;  the Kaplan-Meier function does 
-Xnot change at these values.
-X
-X\bigskip
-X\bigskip
-X\noindent{\large\bf 3.3  TWOST Instructions and Example}
-X
-X       Suppose one wishes to see two sample tests comparing the  subsamples
-X  in Table 1. If one runs {\sl\bf ASURV} interactively from the terminal, the
-X  conversation goes as follows:
-X\begin{verbatim}  
-X
-X   Data type                :     1         [Univariate data]
-X   Problem                  :     2         [Two sample test]
-X   Command file?            :     N         [Instructions from terminal]
-X   Data file                :     gal2.dat  [up to 9 characters]
-X   Problem Title            :     IR Luminosities of Galaxies
-X                                            [up to 80 characters]
-X   Number of variables      :     1 
-X                                            [if the preceeding answer is more
-X                                             than 1, the number of the variable
-X                                             to be tested is now requested]
-X   Name of variable         :     IR        [up to 9 characters]
-X   Number of groups         :     3
-X   Which combination ?      :     0         [by the indicators in column one 
-X                                  1          of the data set]
-X   Name of subsamples       :     Normal    [up to 9 characters]
-X                                  Starburst 
-X   Need detail print out ?  :     N
-X   Print full K-M?          :     Y 
-X   Print out differential
-X       form of K-M?         :     N
-X   Print original data?     :     N
-X   Output file?             :     Y
-X   Output file name?        :     gal2.out     [up to 9 characters]
-X   Other analysis?          :     N
-X 
-X\end{verbatim}
-XA command file that performs the same operations goes as follows, after 
-Xanswering 'Y' or 'y' where it asks for a command file:
-X\begin{verbatim}
-X 
-X    gal2.dat                     ... data file                   
-X    IR Luminosities of Galaxies  ... title                      
-X    1                            ... number of variables      
-X    1                            ... which variable?         
-X    IR                           ... name of the variable   
-X    3                            ... number of groups        
-X    0   1   2                    ... indicators of the groups   
-X    0   1   0   1                ... first group for testing 
-X                                     second group for testing
-X                                     need detail print out ? (if Y:1, N:0)
-X                                     need full K-M print out? (if Y:1, N:0)
-X    0                            ... printing differential K-M (yes=1, no=0)
-X    0                            ... print original data? (if Y:1, N:0)
-X    Normal                       ... name of first group    
-X    Starburst                    ... name of second group        
-X    gal2.out                     ... output file               
-X\end{verbatim} 
-X     The resulting output is shown in Table 4. It shows that the
-Xprobability that the distribution of IR luminosities of normal and 
-Xstarburst galaxies are similar at the 5\% level in both the Gehan and Logrank 
-Xtests.
-X
-X\bigskip
-X\bigskip
-X\noindent{\large\bf 3.4  BIVAR Instructions and Example}
-X
-X       Suppose one wishes to test for correlation and perform regression
-Xbetween the optical and infrared luminosities for the galaxy sample in
-XTable 2. If one  runs {\sl\bf ASURV} interactively from the terminal, the
-Xconversation looks as follow:
-X\begin{verbatim} 
-X
-X  Data type                :  2         [Bivariate data]
-X  Command file?            :  N         [Instructions from terminal]
-X  Title                    :  Optical-Infrared Relation 
-X                                        [up to 80 characters]
-X  Data file                :  gal3.dat  [up to 9 characters]
-X  Number of Indep. variable:  1
-X  Which methods?           :  1         [Cox hazard model]
-X    another one ?          :  Y
-X                           :  4         [EM algorithm regression] 
-X                           :  N
-X  Name of Indep. variable  :  Optical
-X  Name of Dep. variable    :  Infrared
-X  Print original data?     :  N
-X  Save output ?            :  Y
-X  Name of Output file      :  gal3.out 
-X  Tolerance level ?        :  N          [Default : 1.0E-5]
-X  Initial estimate ?       :  N
-X  Iteration limits ?       :  Y 
-X  Max. iterations          :  50
-X  Other analysis?          :  N
-X\end{verbatim} 
-X
-X     The user may notice that the above test run includes several input
-Xparameters specific to the EM algorithm (tolerance level through maximum 
-Xiterations).  All of the regression procedures, particularly  Schmitt's
-Xtwo-dimensional Kaplan-Meier estimator method that requires specification 
-Xof the bins, require such extra inputs.  
-X
-X     A command file that performs the same operations goes as follows, 
-Xfollowing the request for a command file name:
-X\begin{verbatim} 
-XOptical-Infrared Relation          ....  title     
-Xgal3.dat                           ....  data file    
-X1   1   2                          ....  1. number of independent variables
-X                                         2. which independent variable
-X                                         3. number of methods
-X1   4                              ....  method numbers (Cox, and EM) 
-XOptical  Infrared                  ....  name of indep.& dep
-X                                         variables
-X0                                  ....  no print of original data
-Xgal3.out                           ....  output file name 
-X1.0E-5                             ....  tolerance  
-X0.0       0.0       0.0       0.0  ....  estimates of coefficients
-X50                                 ....  iteration  
-X\end{verbatim} 
-X
-X     The resulting output is shown in Table 5. It shows that the
-Xcorrelation between optical and IR luminosities is significant at a
-Xconfidence level P $<$ 0.01\%, and the linear fit  is 
-X$log(L_{IR})\alpha(1.05 \pm 0.08)*log(L_{OPT})$. It is important to run all 
-Xof the methods in order to get a more complete understanding of the 
-Xuncertainties in these estimates.
-X
-X      If you want to use Buckley-James method, Spearman's rho, or Schmitt's 
-Xmethod from a command file, you need the next extra inputs:
-X
-X\begin{verbatim}
-X                          (for B-J method)
-X1.0e-5                           tolerance
-X30                               iteration
-X
-X                          (for Spearman's Rho)
-X1                                  Print out the ranks used in computation;
-X                                    if you do not want, set to 0  
-X
-X                          (for Schmitt's)
-X10  10                             bin # for X & Y
-X10                                 if you want to set the binning
-X                                   information, set it to the positive
-X                                   integer; if not, set to 0.
-X1.e-5                              tolerance
-X30                                 iteration
-X0.5      0.5                       bin size for X & Y
-X26.0    27.0                       origins for X & Y
-X1                                  print out two dim KM estm;
-X                                    if you do not need, set to 0.
-X100                                # of iterations for bootstrap error 
-X                                    analysis; if you do not want error 
-X                                    analysis, set to 0
-X-37                                negative integer seed for random number
-X                                    generator used in error analysis.
-X\end{verbatim}
-X\newpage
-X
-X\centerline{\Large\bf Table 1}
-X
-X\bigskip
-X\bigskip
-X
-X\centerline{\large\bf Example of UNIVAR Data Input for TWOST}
-X
-X\bigskip
-X
-X\centerline{\large\bf IR,Optical and Radio Luminosities of Normal,}
-X\centerline{\large\bf  Starburst and Seyfert Galaxies}
-X
-X\begin{verbatim}
-X                                            ____
-X                        0   0      28.5       |
-X                        0   0      26.9       |
-X                        0  -1      29.7     Normal galaxies
-X                        0  -1      28.1       |
-X                        0   0      30.1       |
-X                        0  -1      27.6     ____
-X                        1  -1      29.0       |
-X                        1   0      29.0       |
-X                        1   0      30.2     Starburst galaxies
-X                        1  -1      32.4       |
-X                        1   0      28.5       |
-X                        1   0      31.1     ____
-X                        2   0      31.9       |
-X                        2  -1      32.3     Seyfert galaxies
-X                        2   0      30.4       |
-X                        2   0      31.8     ____
-X                        |   |         |
-X                       #1  #2       #3
-X
-X                     ---I---I---------I--
-X       Column #         4   8        17
-X   
-X    Note : #1 : indicator of subsamples (or groups)
-X                If you need only K-M estimator, leave out this indicator.
-X           #2 : indicator of censoring
-X           #3 : variable (in this case, the values are in log form)
-X\end{verbatim}
-X\newpage
-X
-X\centerline{\Large\bf Table 2}
-X
-X\bigskip
-X\bigskip
-X
-X\centerline{\large\bf Example of Bivariate Data Input for MULVAR}
-X
-X\bigskip
-X
-X\centerline{\large\bf Optical and IR luminosity relation of IRAS galaxies}
-X
-X\begin{verbatim}
-X
-X                      0      27.2      28.5 
-X                      0      25.4      26.9
-X                     -1      27.2      29.7
-X                     -1      25.9      28.1  
-X                      0      28.8      30.1 
-X                     -1      25.3      27.6
-X                     -1      26.5      29.0   
-X                      0      27.1      29.0  
-X                      0      28.9      30.2 
-X                     -1      29.9      32.4
-X                      0      27.0      28.5
-X                      0      29.8      31.1 
-X                      0      30.1      31.9   
-X                     -1      29.7      32.3  
-X                      0      28.4      30.4 
-X                      0      29.3      31.8
-X                      |       |         |
-X                     #1      #2        #3
-X                           _________  ______
-X                           Optical      IR
-X
-X                   ---I---------I---------I--
-X       Column #       4        13        22
-X
-X    Note : #1 :  indicator of censoring
-X           #2 :  independent variable (may be more Than one)
-X           #3 :  dependent variable
-X\end{verbatim}
-X\newpage
-X
-X\centerline{\Large\bf Table 3}
-X
-X\bigskip
-X
-X\centerline{\large\bf Example of KMESTM Output}
-X
-X\bigskip
-X
-X\begin{small}
-X\begin{verbatim}
-X        KAPLAN-MEIER ESTIMATOR
-X    
-X        TITLE : IR Luminosities of Galaxies                                                     
-X        DATA FILE :  gal1.dat
-X    
-X        VARIABLE : IR       
-X    
-X        # OF DATA POINTS :   6 # OF UPPER LIMITS :   3
-X    
-X          VARIABLE RANGE      KM ESTIMATOR   ERROR
-XFROM    0.000   TO   26.900       1.000
-XFROM   26.900   TO   28.500       0.375       0.213
-X       27.600 C 
-X       28.100 C 
-XFROM   28.500   TO   30.100       0.167       0.152
-X       29.700 C 
-XFROM   30.100   ONWARDS           0.000       0.000
-X
-X      SINCE THERE ARE LESS THAN 4 UNCENSORED POINTS,
-X      NO PERCENTILES WERE COMPUTED.
-X    
-X        MEAN=    27.767 +/- 0.515
-X  
-X        DIFFERENTIAL KM ESTIMATOR
-X        BIN CENTER          D
-X  
-X         26.000          3.750
-X         28.000          1.250
-X         30.000          1.000
-X         32.000          0.000
-X         34.000          0.000
-X                       -------
-X          SUM =          6.000
-X  
-X (D GIVES THE ESTIMATED DATA POINTS IN EACH BIN)
-X        INPUT DATA FILE: gal1.dat 
-X        CENSORSHIP     X 
-X               0    28.500
-X               0    26.900
-X              -1    29.700
-X              -1    28.100
-X               0    30.100
-X              -1    27.600
-X
-X\end{verbatim}
-X\end{small}
-X\newpage
-X
-X
-X\centerline{\Large\bf Table 4}
-X
-X\bigskip
-X
-X\centerline{\large\bf Example of TWOST Output}
-X
-X\bigskip
-X
-X\begin{small}
-X\begin{verbatim} 
-X           ******* TWO SAMPLE TEST ******
-X
-X        TITLE : IR Luminosities of Galaxies                                                     
-X        DATA SET : gal2.dat 
-X        VARIABLE : IR       
-X        TESTED GROUPS ARE Normal    AND Starburst
-X     
-X      # OF DATA POINTS :  12, # OF UPPER LIMITS :   5
-X      # OF DATA POINTS IN GROUP I  :   6
-X      # OF DATA POINTS IN GROUP II :   6
-X     
-X        GEHAN`S GENERALIZED WILCOXON TEST -- PERMUTATION VARIANCE
-X     
-X          TEST STATISTIC        =       1.652
-X          PROBABILITY           =       0.0986
-X
-X     
-X        GEHAN`S GENERALIZED WILCOXON TEST -- HYPERGEOMETRIC VARIANCE
-X     
-X          TEST STATISTIC        =       1.687
-X          PROBABILITY           =       0.0917
-X
-X     
-X        LOGRANK TEST 
-X     
-X          TEST STATISTIC        =       1.814
-X          PROBABILITY           =       0.0696
-X
-X     
-X        PETO & PETO GENERALIZED WILCOXON TEST
-X     
-X          TEST STATISTIC        =       1.730
-X          PROBABILITY           =       0.0837
-X
-X     
-X        PETO & PRENTICE GENERALIZED WILCOXON TEST
-X     
-X          TEST STATISTIC        =       1.706
-X          PROBABILITY           =       0.0881
-X
-X    
-X    
-X        KAPLAN-MEIER ESTIMATOR
-X    
-X        DATA FILE :  gal2.dat
-X    
-X        VARIABLE : Normal   
-X    
-X        # OF DATA POINTS :   6 # OF UPPER LIMITS :   3
-X    
-X          VARIABLE RANGE      KM ESTIMATOR   ERROR
-XFROM    0.000   TO   26.900       1.000
-XFROM   26.900   TO   28.500       0.375       0.213
-X       27.600 C 
-X       28.100 C 
-XFROM   28.500   TO   30.100       0.167       0.152
-X       29.700 C 
-XFROM   30.100   ONWARDS           0.000       0.000
-X    
-X
-X      SINCE THERE ARE LESS THAN 4 UNCENSORED POINTS,
-X      NO PERCENTILES WERE COMPUTED.
-X    
-X        MEAN=    27.767 +/- 0.515
-X    
-X    
-X        KAPLAN-MEIER ESTIMATOR
-X    
-X        DATA FILE :  gal2.dat
-X    
-X        VARIABLE : Starburst
-X    
-X        # OF DATA POINTS :   6 # OF UPPER LIMITS :   2
-X    
-X          VARIABLE RANGE      KM ESTIMATOR   ERROR
-XFROM    0.000   TO   28.500       1.000
-XFROM   28.500   TO   29.000       0.600       0.219
-X       29.000 C 
-XFROM   29.000   TO   30.200       0.400       0.219
-XFROM   30.200   TO   31.100       0.200       0.179
-XFROM   31.100   ONWARDS           0.000       0.000
-X       32.400 C 
-X    
-X        PERCENTILES    
-X         75 TH     50 TH     25 TH
-X         17.812    28.750    29.900
-X    
-X        MEAN=    29.460 +/- 0.460
-X\end{verbatim}
-X\end{small}
-X\newpage
-X
-X
-X\centerline{\Large\bf Table 5}
-X
-X\bigskip 
-X\bigskip 
-X
-X\centerline{\large\bf Example of BIVAR Output}
-X
-X\bigskip
-X
-X\begin{center}
-X\begin{verbatim}
-X
-X     
-X      CORRELATION AND REGRESSION PROBLEM
-X      TITLE IS  Optical-Infrared Relation                                                       
-X     
-X      DATA FILE IS gal3.dat 
-X     
-X     
-X      INDEPENDENT       DEPENDENT
-X        Optical   AND    Infrared
-X     
-X     
-X      NUMBER OF DATA POINTS :    16
-X      UPPER LIMITS IN  Y    X    BOTH   MIX
-X                       6    0       0    0
-X     
-X    
-X     CORRELATION TEST BY COX PROPORTIONAL HAZARD MODEL
-X    
-X       GLOBAL CHI SQUARE =   18.458 WITH 
-X               1 DEGREES OF FREEDOM
-X       PROBABILITY    =    0.0000
-X    
-X          
-X    LINEAR REGRESSION BY PARAMETRIC EM ALGORITHM
-X          
-X       INTERCEPT COEFF    :  0.1703  +/-  2.2356
-X       SLOPE COEFF 1      :  1.0519  +/-  0.0793
-X       STANDARD DEVIATION :  0.3687
-X       ITERATIONS         : 27
-X          
-X
-X
-X\end{verbatim}
-X\end{center}
-X 
-X\newpage
-X
-X\centerline{\Large\bf 4  Acknowledgements}
-X 
-X     The production and distribution of {\sl\bf ASURV Rev 1.2} was 
-Xprincipally funded at Penn State by 
-Xa grant from the Center for Excellence in Space Data and Information
-XSciences (operated by the Universities Space Research Association in
-Xcooperation with NASA), NASA grants NAGW-1917 and NAGW-2120, and
-XNSF grant DMS-9007717. T.I. was supported by NASA grant NAS8-37716.
-XWe are grateful to Prof. Michael Akritas (Dept. of Statistics, Penn 
-XState) for advice and guidance on mathematical issues, and
-Xto Drs. Mark Wardle (Dept. of Physics and Astronomy, Northwestern
-XUniversity), Paul Eskridge (Harvard-Smithsonian Center for Astrophysics),
-XEric Smith (Laboratory for Astronomy and Solar Physics, NASA-Goddard
-XSpace Flight Center) and Eric Jensen (Wisconsin)
-Xfor generous consultation and assistance on the coding.
-XWe would also like to thank Drs. Peter Allan (Rutherford Appleton Laboratory),
-XSimon Morris (Carnegie Observatories), Karen Strom (UMASS), and Marco
-XLolli (Bologna) for their help in debugging {\sl\bf ASURV Rev 1.0}.
-X
-X\newpage
-X
-X\bigskip
-X\centerline{\Large\bf APPENDICES}
-X
-X\bigskip
-X\bigskip
-X\noindent{\large\bf A1  Overview of Survival Analysis }
-X  
-X     Statistical methods dealing with censored data have a long and
-Xconfusing history.  It began in the 17th century with the development of
-Xactuarial mathematics for the life insurance industry and demographic 
-Xstudies.  Astronomer Edmund Halley was one of the founders. In the
-Xmid-20th century, this application grew along with biomedical and clinical
-Xresearch into a major field of biometrics. Similar (and sometimes 
-Xidentical) statistical methods were  being developed in two other fields:
-Xthe theory of reliability, with industrial and engineering applications; 
-Xand econometrics, with attempts to understand the relations between
-Xeconomic forces in groups of people. Finally, we find the same mathematical
-Xproblems and some of the same solutions arising in modern astronomy as
-Xoutlined in {\bf \S 1} above.
-X 
-X     Let us give an illustration on the use of survival analysis in these
-Xdisparate fields.  Consider a linear regression problem.   First, an 
-Xepidemiologist wishes to determine how the human longevity or `survival time' 
-X(dependent variable) depends on the number of cigarettes smoked per day 
-X(independent variable).  The experiment lasts 10 years, during which some 
-Xindividuals die  and others do not. The survival time of the living 
-Xindividuals is only known to be greater than their age when the experiment
-Xends. These values are therefore `right censored data points'.  Second, 
-Xan engine manufacturing company engines wishes to know the average time 
-Xbetween breakdowns as a function of engine speed to determine the optimal
-Xoperating range.  Test engines are set running until 20\% of them fail; 
-Xthe average `lifetime' and dependence on speed is then calculated with 
-X80\% of the data points right-censored.  Third, an astronomer observes a sample
-Xof nearby galaxies in the far-infrared to determine the relation between 
-Xdust and molecular gas.  Half have detected infrared luminosities  but 
-Xhalf are upper limits (left-censored data points).  The astronomer then seeks
-Xthe relationship between infrared luminosities and the CO traces of molecular
-Xmaterial to investigate star formation efficiency.  The CO observations may 
-Xalso contain censored values.
-X 
-X     Astronomers have dealt with their upper limits in a number of
-Xfashions.  One is to consider only detections in the analysis; while
-Xpossibly acceptable for some purposes (e.g. correlation),  this will 
-Xclearly bias the results in others (e.g. estimating  luminosity functions).
-XA second procedure considers the ratio of detected objects to observed 
-Xobjects in a given sample. When plotted in a range of luminosity bins, 
-Xthis has been called the `fractional luminosity function' and has been 
-Xfrequently used in extragalactic radio astronomy.  This is mathematically 
-Xthe same as actuarial life tables.  But it is sometimes used incorrectly 
-Xin comparing different samples:  the detected fraction clearly depends on 
-Xthe (usually uninteresting) distance to the objects as well as their
-X(interesting)  luminosity.  Also, simple $sqrt$N error bars do not
-Xapply in these fractional luminosity functions, as is frequently assumed. 
-X 
-X     A third procedure is to take all of the data, including the exact
-Xvalues of the upper limits, and model the properties of   the parent
-Xpopulation under certain mathematical constraints, such as maximizing 
-Xthe likelihood that the censored points follow the same distribution as the
-Xuncensored points.  This technique, which is at the root of much of modern 
-Xsurvival analysis, was independently developed by astrophysicists (Avni et al.
-X1980; Avni and Tananbaum 1986) and is now commonly used in observational
-Xastronomy. 
-X
-X     The advantage accrued in learning and using survival analysis methods 
-Xdeveloped in biometrics, econometrics, actuarial and reliability
-Xmathematics is the wide range of useful techniques developed in these 
-Xfields. In general, astronomers can have faith in the mathematical validity
-Xof survival analysis.  Issues of great social importance (e.g.
-Xestablishing Social Security benefits, strategies for dealing with the 
-XAIDS epidemic, MIL-STD reliability standards) are based on it. In detail,
-Xhowever, astronomers must study the assumptions underlying each method and
-Xbe aware that some methods at the  forefront of survival analysis that may 
-Xnot be fully understood.
-X 
-X     \S {\bf A2} below gives a bibliography of selected works concerning 
-Xsurvival analysis statistical methods.  We have listed some  recent
-Xmonographs from the biometric and reliability field that we have found to
-Xbe useful (Kalbfleisch and Prentice 1980; Lee 1980;  Lawless 1982; Miller
-X1981; Schneider 1986), as well as one from econometrics (Amemiya 1985). 
-XPapers from the astronomical literature dealing with these methods include
-XAvni et al. (1980), Schmitt (1985), Feigelson and Nelson (1985), Avni and 
-XTananbaum (1986), Isobe et al. (1986), and Wardle and Knapp (1986).  It is
-Ximportant to recognize that the methods presented in these papers and in 
-Xthis software package represent only a small part of the entire body of 
-Xstatistical methods applicable to censored data.
-X
-X
-X\bigskip
-X\bigskip
-X\noindent{\large\bf A2  Annotated Bibliography}
-X
-X\begin{description}
-X\item [] Akritas, M. ``Aligned Rank Tests for Regression With Censored Data'',
-X   Penn State Dept. of Statistics Technical Report, 1989. \\
-X   {\it Source for ASURV's generalized Spearman's rho computation.}
-X
-X\item [] Amemiya, T.  {\bf Advanced Econometrics} (Harvard U. Press:Cambridge 
-X   MA) 1985. \\
-X   {\it Reviews econometric `Tobit' regression models including censoring.}
-X
-X\item [] Avni, Y., Soltan, A., Tananbaum, H. and Zamorani, G. ``A Method for 
-X   Determining Luminosity Functions Incorporating Both Flux Measurements 
-X   and Flux Upper Limits, with Applications to the Average X-ray to Optical 
-X   Luminosity Ration for Quasars", {\bf Astrophys. J.} 235:694 1980. \\
-X   {\it The discovery paper in the astronomical literature for the 
-X   differential Kaplan-Meier estimator.}
-X
-X\item [] Avni, Y. and Tananbaum, H. ``X-ray Properties of Optically Selected 
-X    QSOs",     {\bf Astrophys. J.} 305:57 1986. \\
-X   {\it The discovery paper in the astronomical literature of the linear 
-X    regression with censored data for the Gaussian model.}
-X
-X\item [] Bickel, P.J and Ritov, Y. ``Discussion:  `Censoring in 
-X    Astronomical Data Due
-X    to Nondetections' by Eric D. Feigelson'', in {\bf Statistical Challenges
-X    in Modern Astronomy}, eds. E.D. Feigelson and G.J. Babu, (Springer-Verlag:
-X    New York) 1992. \\
-X    {\it A discussion of the possible inadequacies of survival analysis for
-X    treating low signal-to-noise astronomical data.}
-X
-X\item [] Brown, B .J. Jr., Hollander, M., and Korwar, R. M. ``Nonparametric 
-X    Tests of Independence for Censored Data, with Applications to Heart 
-X    Transplant Studies" from {\bf Reliability and Biometry}, eds. F. Proschan 
-X    and R. J. Serfling (SIAM: Philadelphia) p.327 1974.\\
-X    {\it Reference for the generalized Kendall's tau correlation coefficient.}
-X
-X\item [] Buckley, J. and James, I. ``Linear Regression with Censored Data", 
-X    {\bf Biometrika} 66:429 1979.\\
-X    {\it Reference for the linear regression with Kaplan-Meier residuals.}
-X
-X\item [] Feigelson, E. D. ``Censored Data in Astronomy'', {\bf Errors,
-X    Bias and Uncertainties in Astronomy}, eds. C. Jaschek and F. Murtagh,
-X    (Cambridge U. Press: Cambridge) p. 213 1990.\\
-X    {\it A recent overview of the field.}
-X
-X\item [] Feigelson, E. D. and Nelson, P. I. ``Statistical Methods for 
-X    Astronomical Data with Upper Limits: I. Univariate Distributions", 
-X    {\bf Astrophys. J.} 293:192 1985.\\
-X    {\it Our first paper, presenting the procedures in UNIVAR here.}
-X
-X\item [] Isobe, T., Feigelson, E. D., and Nelson, P. I. ``Statistical Methods 
-X    for Astronomical Data with Upper Limits: II. Correlation and Regression",
-X    {\bf Astrophys. J.} 306:490 1986.\\
-X    {\it Our second paper, presenting the procedures in BIVAR here.}
-X
-X\item [] Isobe, T. and Feigelson, E. D. ``Survival Analysis, or What To Do with
-X    Upper Limits in Astronomical Surveys", {\bf Bull. Inform. Centre Donnees
-X    Stellaires}, 31:209 1986.\\
-X    {\it A precis of the above two papers in the Newsletter of Working Group 
-X    for Modern Astronomical Methodology.}
-X
-X\item [] Isobe, T. and Feigelson, E. D. ``ASURV'', {\bf Bull. Amer. Astro.
-X    Society}, 22:917 1990.\\
-X    {\it The initial software report for ASURV Rev 1.0.}
-X
-X\item [] Kalbfleisch, J. D. and Prentice, R. L. {\bf The Statistical Analysis 
-X    of Failure Time Data} (Wiley:New York) 1980.\\
-X    {\it A well-known monograph with particular emphasis on Cox regression.}
-X
-X\item [] Latta, R. ``A Monte Carlo Study of Some Two-Sample Rank Tests With
-X    Censored Data'', {\bf Jour. Amer. Stat. Assn.}, 76:713 1981. \\
-X    {\it A simulation study comparing several two-sample tests available in
-X    ASURV.}
-X
-X\item [] LaValley, M., Isobe, T. and Feigelson, E.D. ``ASURV'', {\bf Bull.
-X    Amer. Astro. Society} 1992
-X    {\it The new software report for ASURV Rev. 1.1.}
-X
-X\item [] Lawless, J. F. {\bf Statistical Models and Methods for Lifetime Data}
-X    (Wiley:New York) 1982.\\
-X    {\it A very thorough monograph, emphasizing parametric models and
-X    engineering applications.}
-X
-X\item [] Lee, E. T. {\bf Statistical Methods for Survival Data Analysis}
-X    (Lifetime Learning Pub.:Belmont CA) 1980.\\
-X    {\it Hands-on approach, with many useful examples and Fortran programs.}
-X
-X\item [] Magri, C., Haynes, M., Forman, W., Jones, C. and Giovanelli, R.
-X    ``The Pattern of Gas Deficiency in Cluster Spirals: The Correlation of
-X    H I and X-ray Properties'', {\bf Astrophys. J.} 333:136 1988. \\
-X    {\it A use of bivariate survival analysis in astronomy, with a
-X    good discussion of the applicability of the methods.}
-X
-X\item [] Millard, S. and Deverel, S. ``Nonparametric Statistical Methods for
-X    Comparing Two Sites Based on Data With Multiple Nondetect Limits'',
-X    {\bf Water Resources Research}, 24:2087 1988. \\
-X    {\it A good introduction to the two-sample tests used in ASURV, written
-X    in nontechnical language.}
-X
-X\item [] Miller, R. G. Jr. {\bf Survival Analysis} (Wiley, New York) 1981.\\
-X    {\it A good introduction to the field; brief and informative lecture notes
-X    from a graduate course at Stanford.}
-X
-X\item [] Prentice, R. and Marek, P. ``A Qualitative Discrepancy Between 
-X    Censored Data Rank Tests'', {\bf Biometrics} 35:861 1979. \\
-X    {\it A look at some of the problems with the Gehan two-sample test, using
-X    data from a cancer experiment.}
-X
-X\item[] Sadler, E. M., Jenkins, C. R.  and Kotanyi, C. G..
-X    ``Low-Luminosity Radio Sources in Early-Type Galaxies'', 
-X    {\bf Mon. Not. Royal Astro. Soc.} 240:591 1989. \\
-X    {\it An astronomical application of survival analysis, with 
-X    useful discussion of the methods in the Appendices.}
-X
-X\item [] Schmitt, J. H. M. M. ``Statistical Analysis of Astronomical Data 
-X    Containing Upper Bounds: General Methods and Examples Drawn from X-ray 
-X    Astronomy", {\bf Astrophys. J.} 293:178 1985.\\
-X    {\it Similar to our papers, a presentation of survival analysis for 
-X    astronomers.  Derives {\sl\bf TWOKM} regression for censoring in both 
-X    variables.}
-X
-X\item [] Schneider, H. {\bf Truncated and Censored Samples from Normal 
-X    Populations} (Dekker: New York) 1986.\\
-X    {\it Monograph specializing on Gaussian models, with a good discussion of 
-X    linear regression.}
-X
-X\item [] Wagner, A. E. and Meeker, W. Q. Jr. ``A Survey of Statistical Software
-X    for Life Data Analysis", in {\bf 1985 Proceedings of the Statistical 
-X    Computing Section}, (Amer. Stat. Assn.:Washington DC), p. 441.\\
-X    {\it Summarizes capabilities and gives addresses for other software
-X     packages.}
-X
-X\item [] Wardle, M. and Knapp, G. R. ``The Statistical Distribution of the 
-X    Neutral-Hydrogen Content of S0 Galaxies", {\bf Astron. J.} 91:23 1986.\\
-X    {\it Discusses the differential Kaplan-Meier distribution and its error
-X    analysis.}
-X
-X\item [] Wolynetz, M. S. ``Maximum Likelihood Estimation in a Linear Model 
-X    from     Confined and Censored Normal Data", {\bf Appl. Stat.} 28:195 
-X    1979.\\
-X    {\it Published Fortran code for the EM algorithm linear regression.}
-X
-X\end{description}
-X
-X\bigskip
-X\bigskip
-X
-X
-X\noindent{\Large\bf A3 Rev 1.1 Modifications and Additions}
-X
-X     Each of the three major areas of {\sl\bf ASURV}; the KM 
-Xestimator, the two-sample tests, and the bivariate methods have been 
-Xupdated in going from Rev 0.0 to Rev 1.1. 
-X
-X\noindent{\large\bf A3.1 KMESTM}
-X
-X     In the Survival Analysis literature, the value of the survival function
-Xat a x-value is the probability that a given observation will be at least as
-Xlarge as that x-value.  As a result, the survival curve starts with a 
-Xvalue of one and declines to zero as the x-values increase.  The 
-XKM estimate of the survival curve should mirror this behavior by 
-Xstarting at one and declining to zero as more and more of the observations
-Xare passed.  In Rev 0.0, the KM estimate for right-censored (lower limits) 
-Xdata was given in that form, but the KM estimate for left-censored
-X(upper limits) data started at zero and increased to one.  As a result,
-Xthe x-values where jumps in the KM estimate occurred were correct, and the 
-Xjumps were of the correct height, but the reported survival value at most 
-Xpoints were (in a strict sense) incorrect.  In Rev 1.1, this has been
-Xcorrected so that the KM estimate will move in the proper direction for both
-Xupper limits and lower limits data.  
-X
-X     A differential, or binned, Kaplan-Meier estimate has also been added to
-Xthe package.  This allows the user to find the number of points falling into
-Xspecified bins along the X-axis according to the Kaplan-Meier estimated
-Xsurvival curve.  However, astronomers are strongly encouraged to use the
-Xintegral KM for which analytic error analysis is available.  There is
-X{\bf no known error analysis} for the differential KM.
-X
-X\noindent{\large\bf A3.2 TWOST}
-X
-X     In Rev 0.0 the code for two-sample tests relied heavily on code published
-Xin {\bf Statistical Methods for Survival Data Analysis} by E.T. Lee.  Since the
-Xpublication of this book in 1980, there have been several articles and 
-Xsimulation studies done on the various two-sample tests.  Lee's book 
-Xuses a permutation variance for its tests, which assumes that both 
-Xgroups being considered are subject to the same censoring pattern.  Tests 
-Xwith hypergeometric variance form seem to be more `robust' against differences
-Xin the censoring patterns, and some statistical software packages 
-X($e.g.$ SAS) have replaced permutation variances with hypergeometric variances.
-XWe have also realized that Rev 0.0 presented Lee's Peto-Peto test, rather
-Xthan the Peto-Prentice test described in Feigelson and Nelson (1985) and the
-XRev. 0.0 {\sl\bf ASURV} manual.
-X
-X     In light of these developments we have modified the two-sample tests
-Xcalculated in {\sl\bf ASURV}.  Rev 1.1 offers two versions of 
-XGehan's test:  one with permutation variance (which will match the Gehan's 
-Xtest value from Rev 0.0) and one with hypergeometric variance.  The logrank 
-Xtest now uses a hypergeometric variance, but the Peto-Peto test still uses a 
-Xpermutation variance.  The Cox-Mantel test has been removed as it was very
-Xsimilar to the logrank test, and the Peto-Prentice test has been added.  The
-XPeto-Prentice test uses an asymptotic variance form that has been shown to
-Xdo very well in simulation studies (Latta, 1981).
-X
-X     {\sl\bf ASURV} now automatically does all the two-sample tests, 
-Xinstead of asking the user to specify which tests to run.  These tests 
-Xare not very time consuming and the user will do well to consider 
-Xthe results of all the tests.  If the p-values differ significantly, 
-Xthen the Peto-Prentice test is probably the most reliable (Prentice 
-Xand Marek, 1979).  The two-sample tests all use different, but 
-Xreasonable, weightings of the data points, so large discrepancies 
-Xbetween the results of the tests indicates that caution should be 
-Xused in drawing conclusions based on this data.
-X
-X\noindent{\large\bf A3.3 BIVAR}
-X
-X     The bivariate methods have been extended in two ways.  First,
-Xstandard error estimates for the slope and intercept are offered for
-XSchmitt's method of linear regression.  These error estimates are
-Xbased upon the bootstrap, a statistical technique which randomly 
-Xresamples the set of data points, with replacement, many times
-Xand then runs Schmitt's procedure on the artificial data sets created by the
-Xresampling.  Two hundred iterations is considered sufficient to get reasonable 
-Xestimates of the standard error of the estimate in most situations.  
-XHowever, this might be computationally intensive for a large data set.
-X
-X     
-X     The bivariate methods have also been extended by an
-Xadditional correlation routine, a generalized Spearman's rho procedure 
-X(Akritas 1990).  The usual Spearman's rho correlation estimate for uncensored 
-Xdata is simply the correlation between the ranks of the independent and 
-Xdependent variables.  In order to extend the procedure to censored data, the
-XKaplan-Meier estimate of the survival curve is used to assign ranks to the
-Xobservations.  Consequently, the ranks assigned to the observations may not 
-Xbe whole numbers.  Censored points are assigned half (for left-censored)
-Xor twice (for right-censored) the rank that they would have had were
-Xthey uncensored.  This method is based on preliminary findings and 
-Xhas not been carefully scrutinized either theoretically or empirically.  It is
-Xoffered in the code to serve as a less computer intensive approximation to the
-XKendall's tau correlation, which becomes computationally infeasible for large 
-Xdata sets (n $>$ 1000).  {\it The generalized Spearman's Rho routine is not 
-Xdependable for small data sets (n $<$ 30)}.  In that situation the generalized
-XKendall's tau routine should be relied upon.  It should also be noted that 
-Xthe test statistics reported by {\sl\bf ASURV} for Kendall's tau and Spearman's
-Xrho are not directly comparable.  The test statistic reported for Spearman's
-Xrho is an estimated correlation, and the test statistic given for Kendall's
-Xtau is an estimated function of the correlation.  It is the reported
-Xprobabilities that should be compared.
-X
-X\noindent{\large\bf A3.4 Interface, Outputs and Manual}
-X
-X     The screen-keyboard interface has been streamlined somewhat.  For
-Xexample. the user is now provided all two-sample tests without requesting 
-Xthem individually.  New inputs have been introduced for the new programs
-X(differential Kaplan-Meier function, the generalized Spearman's rho, and
-Xerror analysis for Schmitt's regression).  The printed outputs of the
-Xprograms have been clarified in several places where ambiguities were
-Xreported.  For example, the Kaplan-Meier estimator now specifies whether the
-Xchange occurs before or after a given value, the meaning of the correlation
-Xprobabilities is now given explicitly, and warnings are printed when there
-Xis good reason to suspect the results of a test are unreliable.  
-XThe Users Manual has been reorganized so that material that is not actually 
-Xneeded to operate the program has been located in several Appendices.  
-X
-X\bigskip
-X 
-X\bigskip
-X
-X\noindent{\Large\bf A4  Errors Removed in Rev 1.1}
-X
-X     Since {\sl\bf ASURV} was released in November 1991, several errors
-Xhave been discovered in the package by users and have been reported to us.
-XIn revision 1.1, all the bugs that have been reported are corrected.  We
-Xhave also taken the opportunity to correct some subtle programming errors that
-Xwe came across in the code.  The major errors were:
-X
-X\begin{itemize}
-X
-X  \item The command files gal1.com and gal2.com, provided in asurv.etc did not
-X        match the new input formats.  This caused the output files created by
-X        the command files not to match the examples in the manual.
-X
-X  \item The character variable containing the name of the data file was
-X        not defined properly in the subroutine which prints out the results of
-X        Kaplan-Meier estimation.
-X
-X  \item In subroutine TWOST, the variable WRK6 was wrongly specified as WWRK6.
-X
-X  \item Various problems with truncation and integer arithmetic were found
-X        and removed from the code.
-X
-X  \item To help VAX/VMS users, a carriage control line was added to {\sl\bf 
-X        ASURV}.  For information on this addition, look in {\bf \S A7}
-X
-X\end{itemize}
-X
-X
-X\bigskip
-X
-X\noindent{\Large\bf A5 Errors removed in Rev 1.2}
-X
-X     After releasing {\sl\bf ASURV} Rev 1.1 in March 1992, we determined that
-XRev. 1.1, and all previous versions, contained an inconsistency in the
-Xway the Kaplan-Meier routine treated certain data sets.  The problem occurred 
-Xwhen multiple upper limits were tied at the smallest data point, or when
-Xmultiple lower limits were tied at the largest data point.  Since such an 
-Xevent would be very unlikely in the biomedical setting, and {\sl\bf ASURV}
-Xwas initially modeled on biomedical software, no contingency for such a
-Xsituation was contained in the package.  However, this type of censoring
-Xoccurs commonly in astronomical applications, so the package has been 
-Xmodified to reflect this.  The Kaplan-Meier routine in Rev 1.2 temporarily 
-Xchanges all such tied censored points to detections so they can be 
-Xtreated consistently.
-X
-X{\it Other reported bugs:}  Two bugs are present in the univariate
-Xtwo-sample tests.  First, the generalized Wilcoxon and Peto-Prentice 
-Xunivariate two-sample tests may give different results of one switches 
-Xthe sample identifiers when ties are present.  Second, in certain unlikely 
-Xcircumstances when the user runs multiple tests without exiting ASURV, slight 
-Xchanges in test results may be seen.  
-X
-X\bigskip
-X
-X\noindent{\Large\bf A6  Obtaining and Installing ASURV}
-X 
-X     This program is available as a stand-alone package  to any member of 
-Xthe astronomical community without charge.  We provide the FORTRAN source code,
-Xnot the executable files. We prefer to distribute it by electronic mail.  
-XScientists with network connectivity should send their request to:
-X
-X\begin{center}
-X\begin{verbatim}
-X                               code@stat.psu.edu
-X\end{verbatim}
-X\end{center}
-X
-X\noindent specifying {\sl\bf `ASURV Rev. 1.1'} and providing both email and 
-Xregular mail addresses.   ASCII versions of the code can also be mailed, if 
-Xnecessary,  on a 3 1/2-inch double-sided high-density MS-DOS diskette, or a
-X1/2 inch 9-track tape (1600 BPI, written on a UNIX machine).  For any 
-Xquestions regarding the package, contact:
-X
-X\begin{center}
-X\begin{verbatim}
-X                             Prof. Eric Feigelson 
-X                   Department of Astronomy & Astrophysics
-X                        Pennsylvania State University 
-X                          University Park PA  16802
-X
-X                          Telephone: (814) 865-0162 
-X                               Telex: 842-510  
-X                          Email: edf@astro.psu.edu
-X\end{verbatim}
-X\end{center}
-X
-XThe package consists of 59 subroutines of Fortran totally about 1/2 MBy. It
-Xis completely self-contained, requiring no external libraries or programs.  The
-Xcode is distributed in ten files: a brief READ.ME file; six files 
-Xcalled asurv1.f-asurv6.f containing the source code; two documentation files,
-Xwith the users manual in ASCII and LaTeX; and one file called asurv.etc
-Xcontaining test datasets, test outputs and a subroutine list. We request 
-Xthat  recipients not 
-Xdistribute the package themselves beyond their own institution.  Rev. 0.0
-Xof {\sl\bf ASURV} has been incorporated into the larger astronomical software 
-Xsystem SDAS/IRAF, distributed by the Space Telescope Science Institute. 
-X 
-X     Installation requires removing the email headers, Fortran 
-Xcompilation, linking, and executing.  We have written the code
-Xconsistent with Fortran 77 conventions.  It has been successfully ported
-Xto a Sun SPARCstation under UNIX, a DEC VAX under VMS, a personal computer
-Xunder MS-DOS using Microsoft FORTRAN, and an IBM mainframe under VM/CMS.
-XIt can also be ported to a Macintosh with small format changes (see \S
-X{\bf A7} below).  
-X\footnote{SPARCstation is a trademark of Sun Microsystems, Inc; UNIX is a 
-Xtrademark of AT\& T Corporation; VAX and VMS are trademarks of Digital 
-XEquipment Corporation; MS-DOS and Microsoft FORTRAN are trademarks of
-XMicrosoft Corporation; VM/CMS is a trademark of International
-XBusiness Machines Corporation; and Macintosh is a trademark of Apple
-XCorporation.}
-XWhen {\sl\bf ASURV} is compiled using Microsoft FORTRAN the
-Xuser will notice several warnings from the compiler about labels used across
-Xblocks and formal arguments not being used.  The user should not be alarmed,
-Xthese warnings are caused by the compilation of the subroutines separately
-Xand do not reflect program errors.
-X
-X     All of the functions have been tested against textbook formulae, 
-Xpublished examples, and/or commercial software  packages.  However, some 
-Xmethods are not widely used by researchers in other fields, and their behavior
-Xis not well-documented.  We would appreciate hearing about any difficulties or
-Xunusual behavior encountered when running the code. A bug report form for
-X{\sl\bf ASURV} can be found in the asurv.etc file. 
-X
-X\bigskip
-X\bigskip
-X
-X\noindent{\Large\bf A7  User Adjustable Parameters}
-X
-X       {\sl\bf ASURV} is initially set to handle data sets of up to 
-X500 points, with up to  four variables, however a user may wish to 
-Xconsider even larger data sets.  With this in mind, we have modified 
-XRev 1.1 to be easy for a user to adjust to a given sample size.
-X
-X       The sizes of all the arrays in {\sl\bf ASURV} are controlled by 
-Xtwo parameter statements; one is in {\sl\bf UNIVAR} and one is in 
-X{\sl\bf BIVAR}.  Both statements are currently of the form:
-X
-X\begin{verbatim}
-X                  PARAMETER(MVAR=4,NDAT=500,IBIN=50)
-X\end{verbatim}  
-X
-XMVAR is the number of variables allowed in a data set 
-Xand NDAT is the number of observations allowed in a data set.  To work 
-Xwith larger data sets, it is only necessary to change the values MVAR and/or 
-XNDAT in the two parameter statements.  If MVAR is set to be greater 
-Xthan ten, then the data input formats should also be changed to read more 
-Xthan ten variables from the data file.  Clearly, adjusting either MVAR or NDAT
-Xupwards will increase the memory space required to run {\sl\bf ASURV}.
-X
-X       The following table provides listings of format statements that a user 
-Xmight wish to change if data values do not match the default formats:  
-X
-X\begin{verbatim}
-XInput Formats:
-X
-XProblem          Subroutine    Default Format      
-X-------          ----------    --------------
-XKaplan-Meier     DATAIN        Statement    30   FORMAT(10(I4,F10.3))
-XTwo Sample tests 
-X                 DATAIN                     40   FORMAT(I4,10(I4,F10.3))
-XCorrelation/Regression
-X                 DATREG                     20   FORMAT(I4,11F10.3)
-X
-X
-X
-X
-XOutput Formats:
-X
-XProblem          Subroutine     Default Format
-X-------          ----------     --------------
-XKaplan-Meier     KMPRNT         Statements  550 [For Uncensored Points] 
-X                                            555 [For Censored Points]  
-X                                            850 [For Percentiles]
-X                                           1000 [For Mean]
-X                 KMDIF                      680 [For Differential KM]
-X
-XTwo Sample Tests TWOST          Statements 612, 660, 665,780
-X        
-X
-XProblem          Subroutine     Default Format
-X-------          ----------     --------------
-XCorrelation/Regression
-X Cox Regression  COXREG         Statements 1600, 1651, 1650
-X Kendall's Tau   BHK                       2005, 2007
-X Spearman's Rho  SPRMAN                     230, 240, 250, 997
-X EM Algorithm    EM                        1150, 1200, 1250, 1300, 1350
-X Buckley-James   BJ                        1200, 1250, 1300, 1350
-X Schmitt         TWOKM                     1710, 1715, 1720, 1790, 1795, 1800,
-X                                                 1805, 1820
-X 
-X\end{verbatim}                             
-X
-X     Macintosh users who have Microsoft Fortran may have difficulty with the
-Xstatements that read from the keyboard and write to the screen.  Throughout
-X{\sl\bf ASURV} we have used statements of the form,
-X\begin{verbatim}
-X           WRITE(6,format)        READ(5,format).
-X\end{verbatim}
-XMacintosh users may wish to replace the 6 and 5 in statements of the above
-Xtype by `*'.
-X           
-X     VAX/VMS users may notice that the first character of some statements
-Xsent to the screen is not printed.  This can be corrected by removing the 'C' 
-Xat the start of the following statement, in the {\sl\bf ASURV} subroutine,
-X\begin{verbatim}
-X     C      OPEN(6,CARRIAGECONTROL='LIST',STATUS='OLD')
-X\end{verbatim}
-X
-X     Finally, if the data have values which extend beyond three decimal places,
-Xthen the user should reduce the value of `CONST' in the subroutine 
-X{\sl\bf CENS} to have at least two more decimal places than the data.
-X
-X
-X\newpage
-X\noindent{\Large\bf A8  List of subroutines}
-X
-X     The following is an alphabetic listing of all the subroutines 
-Xused in {\sl\bf ASURV} and their respective byte lengths.
-X
-X
-X\bigskip
-X\bigskip
-X\centerline{\large\bf Subroutine List}
-X
-X\bigskip
-X\begin{center}
-X\begin{tabular}{|ll|ll|ll|} \hline
-X   Subroutine & Bytes & Subroutine & Bytes & Subroutine & Bytes  \\ \hline
-X&&&&& \\
-X                AARRAY &4863 & FACTOR &1207 & REARRN & 3057 \\
-X                AGAUSS &1345 & GAMMA &1520 & REGRES & 5505 \\
-X                AKRANK &5887 & GEHAN &3477 & RMILLS & 1448 \\
-X                ARISK &2675 & GRDPRB &11995 & SCHMIT & 8258\\
-X                ASURV &7448 & KMADJ &3758 & SORT1 & 2512\\
-X                BHK &6936 & KMDIF &5058 & SORT2 & 2214\\
-X                BIN &15950 & KMESTM &7570 & SPEARHO & 2021\\
-X                BIVAR &28072 & KMPRNT &8363 & SPRMAN & 8743\\
-X                BJ &5750 & LRANK &6237 & STAT & 1859\\
-X                BUCKLY &9830 & MATINV &3495 & SUMRY & 2324\\
-X                CENS &2225 & MULVAR &15444 & SYMINV & 3007\\
-X                CHOL &2672 & PCHISQ &2257 & TIE & 2784\\
-X                COEFF &1948 & PETO &8054 & TWOKM & 16447\\
-X                COXREG &8032 & PLESTM &6122 & TWOST & 15877\\
-X                DATA1 &2650 & PWLCXN &2158 & UNIVAR & 27677\\
-X                DATA2 &3470 & R3 &1629 & UNPACK & 1702\\
-X                DATAIN &2962 & R4 &6142 & WLCXN & 6358\\
-X                DATREG &4102 & R5 &3058 & XDATA & 1826\\
-X                EM &12581 & R6 &9654 & XVAR & 5319\\
-X                EMALGO &13183 & RAN1 &1432 & &\\ \hline
-X\end{tabular}
-X\end{center}
-X\end{document}
+\documentstyle[11pt] {report}
+\marginparwidth 0pt
+\oddsidemargin  0pt
+\evensidemargin  0pt
+\marginparsep 0pt
+\topmargin=0.0in
+\textwidth=6.25in
+\textheight=8.25in
+\pagestyle{plain}
+\parskip=5pt
+\parindent=30pt
+
+\begin{document}
+\thispagestyle{empty}
+
+\centerline{\Huge\bf  ASURV}
+\bigskip
+\centerline{\Huge\bf Astronomy SURVival Analysis }
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\centerline{\LARGE\bf  A Software Package for Statistical Analysis of }
+
+\bigskip
+\centerline{\LARGE\bf  Astronomical Data Containing Nondetections}
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\begin{tabbing}
+      xxxxxxxxxxx\= \kill
+                 \>xxxxxxxxxxxxxxx\=   \kill
+
+      {\Large\bf Developed by: } \\
+    \> \\
+                 \> {\Large\bf Takashi Isobe } (Center for Space Research, MIT)  \\
+
+    \> \\
+           \> {\Large\bf Michael LaValley } (Dept. of Statistics, Penn State)\\
+
+    \> \\
+                 \>{\Large\bf Eric Feigelson  }(Dept. of Astronomy \& Astrophysics, Penn State) \\
+    \> \\
+    \> \\
+    \> \\
+
+
+       {\Large\bf Available from: }   \\
+                 \>                   \\
+                 \> code@stat.psu.edu \\
+                 \>                   \\
+                 \>or,                \\
+                 \>                   \\
+                 \> Eric Feigelson     \\
+                 \> Dept. of Astronomy \& Astrophysics  \\
+                 \> Pennsylvania State University \\
+                 \> University Park PA  16802 \\
+                 \> (814) 865-0162 \\
+                 \>  Email:  edf@astro.psu.edu  (Internet)\\
+\end{tabbing}
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\centerline{\Large\bf Rev. 1.2, Summer 1992.}
+\newpage
+
+
+\centerline{\Large\bf TABLE OF CONTENTS}
+\bigskip
+\bigskip
+			   
+\noindent{\large\bf 
+\begin{center}
+\begin{verbatim}
+       1 Introduction ............................................  3
+
+       2 Overview of ASURV .......................................  4 
+            2.1  Statistical Functions and Organization ..........  4 
+            2.2  Cautions and caveats ............................  6
+       
+       3 How to run ASURV ........................................  9
+            3.1  Data Input Formats ..............................  9
+            3.2  KMESTM instructions and example ................. 10 
+            3.3  TWOST instructions and example .................. 11 
+            3.4  BIVAR instructions and example .................. 13 
+       
+       4 Acknowledgements ........................................ 21
+       
+       Appendices ................................................ 22
+            A1  Overview of survival analysis .................... 22 
+            A2  Annotated Bibliography on Survival Analysis ...... 23 
+            A3  How Rev 1.2 is Different From Rev 0.0 ............ 26
+            A4  Errors Removed in Rev 1.1 ........................ 28
+            A5  Errors Removed in Rev 1.2 ........................ 28
+            A6  Obtaining and Installing ASURV ................... 28
+            A7  User Adjustable Parameters ....................... 30
+            A8  List of subroutines used in ASURV Rev 1.2 ........ 32
+\end{verbatim}
+\end{center}
+}
+
+
+\bigskip
+
+\bigskip
+
+\bigskip
+
+\centerline{\Large\bf NOTE}
+
+\begin{small}
+
+This program and its documentation are provided `AS IS' without
+warranty of any kind.  The entire risk as the results and performance
+of the program is assumed by the user.  Should the program prove
+defective, the user assume the entire cost of all necessary correction.
+Neither the Pennsylvania State University nor the authors of the program
+warrant, guarantee or make any representations regarding use of, or the
+results of the use of the program in terms of correctness, accuracy 
+reliability, or otherwise.  Neither shall they be liable for any direct or
+indirect damages arising out of the use, results of use or inability to
+use this product, even if the University has been advised of the possibility
+of such damages or claim.  The use of any registered Trademark depicted
+in this work is mere ancillary; the authors have no affiliation with
+or approval from these Trademark owners.
+
+\end{small}
+
+\newpage
+
+\centerline{\Large\bf 1  Introduction} 
+
+    Observational astronomers frequently encounter the situation where they 
+observe a particular property (e.g. far infrared emission, calcium line 
+absorption, CO emission) of a previously defined sample of objects, but 
+fail to detect all of the objects.  The data set then contains nondetections as 
+well as detections, preventing the use of simple and familiar statistical 
+techniques in the analysis.   
+ 
+     A number of astronomers have recently recognized the existence 
+of statistical methods, or have derived similar methods, to deal with these 
+problems.  The methods are collectively
+called `survival analysis' and nondetections are called 
+`censored' data points.  {\sl\bf ASURV} is a menu-driven stand-alone computer
+package designed  to assist astronomers in using methods from survival 
+analysis.  Rev. 1.2 of {\sl\bf ASURV}  provides the maximum-likelihood
+estimator of the censored distribution,
+several two-sample tests, correlation tests and linear regressions  as
+described in our papers in the {\it\bf Astrophysical Journal} (Feigelson 
+and Nelson, 1985; Isobe, Feigelson, and Nelson, 1986). 
+
+     No statistical procedure can magically recover information that was
+never measured at the telescope.  However, there is frequently important 
+information implicit in the failure to detect some objects which can be
+partially recovered under reasonable assumptions. We purposely provide 
+a variety of statistical tests - each 
+based on different models of where  upper limits truly lie - so that the
+astronomer can judge the importance of the different assumptions.  
+There are also reasons for {\bf not} applying these methods.  We describe
+some of their known limitations in {\bf \S  2.2}.
+
+     Because astronomers are frequently unfamiliar with the field of 
+statistics, we devote Appendix {\bf  \S A1} to background 
+material.  Both general issues concerning censored data and specifics 
+regarding the methods used in {\sl\bf ASURV} are discussed.  More 
+mathematical presentations can be found in the references given in Appendix
+{\bf \S A2}. Users of Rev 0.0, distributed between 1988 and 1991,  are 
+strongly encouraged to 
+read Appendices {\bf \S A3-A5} to be familiar with the changes made in the 
+package.  Appendices {\bf \S A6-A8} are needed only by code installers and
+those needing to modify the I/O or array sizes.  
+Users wishing to get right down to work should read  {\bf \S 2.1} to
+find the appropriate program, and follow  the instructions in {\bf \S 3}. 
+
+\bigskip
+\bigskip
+\centerline{\Large\bf Acknowledging ASURV}
+
+     We would appreciate that studies using this package include phrasing
+similar to `... using {\sl\bf ASURV} Rev 1.2 ({\bf B.A.A.S.} reference),
+which implements the methods presented in ({\bf Ap. J.} reference)', where
+the {\bf B.A.A.S.} reference is the most recent published {\sl\bf ASURV}
+Software Report (Isobe and Feigelson 1990; LaValley, Isobe and Feigelson 
+1992) and the {\bf Ap. J.} reference is Feigelson and Nelson (1985) for
+univariate problems and Isobe,Feigelson and Nelson (1986) for bivariate
+problems.  Other general works appropriate for referral include the review
+of survival methods for astronomers by Schmitt (1985), and the survival 
+analysis monographs by Miller (1981) or Lawless (1982).
+
+\newpage
+\centerline{\Large\bf 2 Overview of ASURV}
+    
+       
+\medskip
+\noindent{\large\bf 2.1 Statistical Functions and Organization}
+
+     The statistical methods for dealing with censored data might be
+divided into a 2x2 grid: parametric $vs.$ nonparametric, and univariate $vs.$
+bivariate.  Parametric methods assume that the censored survival times
+are drawn from a parent population with a known distribution function ($e.g.$
+Gaussian, exponential), and this is the principal assumption of survival
+models for industrial reliability.  Nonparametric models make 
+no assumption about the 
+parent population, and frequently rely on maximum-likelihood techniques. 
+Univariate methods are devoted to determining the characteristics of the
+population from which the censored sample is drawn, and comparing such 
+characteristics for two or more censored samples.  Bivariate methods
+measure whether the censored property of the sample is correlated with 
+another property of the objects and, if so, to perform a regression  that 
+quantifies the relationship between the two variables.
+ 
+     We have chosen to concentrate on nonparametric models, since  the 
+underlying distribution of astronomical populations is usually unknown. 
+The linear regression methods however, are either fully parametric 
+($e.g.$ EM algorithm regression) or semi-parametric
+($e.g.$ Cox regression, Buckley-James regression). 
+Most of the methods are described in more detail in the astronomical 
+literature by Schmitt (1985), Feigelson and Nelson (1985) and Isobe et al. 
+(1986).  The generalized Spearman's rho utilized in {\sl\bf ASURV} 
+Rev 1.2 is derived by Akritas (1990).
+
+     The program within {\sl\bf ASURV} giving univariate methods is 
+{\sl\bf UNIVAR}.  Its first subprogram is {\sl\bf KMESTM}, giving the 
+Kaplan-Meier estimator for the distribution function of a randomly 
+censored sample.  First derived in 
+1958, it lies at the root of non-parametric survival analysis.  It is the
+unique, self-consistent, generalized maximum-likelihood estimator for the
+population from which the sample was drawn. When formulated in cumulative 
+form, it has analytic asymptotic (for large N) error bars. The median is
+always well-defined, though the mean is not if the lowest point in the 
+sample is an upper limit.  It is identical to the differential 
+`redistribute-to-the-right' algorithm, independently derived by Avni et al.
+(1980) and others, but the differential form does not have simple analytic 
+error analysis.  
+
+     The second univariate program is {\sl\bf TWOST}, giving a variety 
+of ways to test whether two censored samples are drawn from the same parent
+population.  They are mostly generalizations of standard tests for
+uncensored data, such as the Wilcoxon and logrank nonparametric two-sample
+tests.  They differ in how the censored data are weighted or `scored' in
+calculating the statistic.  Thus each is more sensitive to differences at
+one end or the other of the distribution.  The Gehan and logrank tests are
+widely used in biometrics, while some of the others are not.  The tests 
+offered in Rev 1.2 differ significantly from those offered in Rev 0.0 and
+details of the changes are in {\bf \S A3}.
+
+     {\sl\bf BIVAR} provides methods for bivariate data,  giving three 
+correlation tests and three linear regression analyses. Cox hazard model 
+(correlation test), EM algorithm, and Buckley-James method (linear 
+regressions) can treat several independent variables if the dependent 
+variable contains only one kind of censoring ($i.e.$ upper or lower limits). 
+Generalized Kendall's tau (correlation  test), Spearman's rho 
+(correlation test), and Schmitt's binned linear regression can treat 
+mixed censoring including censoring in the independent variable, but 
+can have only one independent variable.  
+
+	{\sl\bf COXREG} computes the correlation probabilities by Cox's 
+proportional hazard model and {\sl\bf BHK} computes the generalized 
+Kendall's tau.  {\sl\bf SPRMAN} computes correlation probabilities 
+based on a generalized version of Spearman's rank order correlation 
+coefficient.  {\sl\bf EM} calculates linear regression 
+coefficients by  the EM algorithm assuming a normal distribution of
+residuals, {\sl\bf BJ} calculates the Buckley-James regression with 
+Kaplan-Meier residuals, and {\sl\bf TWOKM} calculates the binned 
+two-dimensional Kaplan-Meier distribution and  associated linear 
+regression coefficients derived by Schmitt (1985).  A bootstrapping 
+procedure provides error analysis for Schmitt's method in Rev 1.2.  The 
+code for EM algorithm follows that given by 
+Wolynetz (1979) except minor changes. The code for Buckley-James method 
+is adopted from Halpern (Stanford Dept. of Statistics; private 
+communication).  Code for the Kaplan-Meier estimator and some of the 
+two-sample tests was adapted from that given in Lee (1980).  {\sl\bf COXREG}, 
+{\sl\bf BHK}, {\sl\bf SPRMAN}, and the {\sl\bf TWOKM} code were developed 
+entirely by us.
+   
+     Detailed remarks on specific subroutines can be found in the comments at 
+the beginning of each subroutine.  The reference for the source of the code 
+for the subroutine is given there, as well as an annotated list of the 
+variables used in the subroutine.
+
+\newpage
+\noindent{\Large\bf 2.2  Cautions and Caveats}
+ 
+     The Kaplan-Meier estimator works with any underlying distribution
+($e.g.$ Gaussian, power law, bimodal), but only if the censoring is `random'.
+That is, the probability that the measurement of an object is censored can
+not depend on the value of the censored variable.   At first glance, this
+may seem to be inapplicable to most astronomical problems:  we detect the
+brighter objects in a sample, so the distribution of upper limits always 
+depends on brightness.  However, two factors often serve to randomize 
+the censoring distribution.  First, the censored variable may not be 
+correlated with the variable by which the sample was initially 
+identified.  Thus, infrared observations of a sample of radio bright 
+objects will be randomly censored if the radio and infrared emission are
+unrelated to each other.  Second, astronomical objects in a sample usually
+lie at different distances, so that brighter objects are not always the 
+most luminous.  In cases where the variable of interest is censored at 
+a particular value ($e.g.$ flux, spectral line equivalent width, stellar 
+rotation rate)  rather than randomly censored, then parametric methods 
+appropriate to `Type 1' censoring should be used.  These are described by 
+Lawless (1982) and Schneider (1986), but are not included in this package.
+ 
+     Thus, the censoring mechanism of each study MUST be understood  
+individually to judge whether the censoring is or is not likely to be  
+random.  A good example of this judgment process is provided by 
+Magri et al. (1988).  The appearance of the data, even if the upper limits 
+are clustered at one end of the distribution, is NOT a reliable measure. A 
+frequent (if philosophically distasteful) escape from the difficulty of
+determining the nature of the censoring in a given experiment is to define
+the population of interest to be the observed sample. The Kaplan-Meier
+estimator then always gives a valid redistribution of the upper limits,
+though the result may not be applicable in wider contexts. 
+
+     The two-sample tests are somewhat less restrictive than the
+Kaplan-Meier estimator, since they seek only to compare two samples rather
+than  determine the true underlying distribution.  Because of this, the
+two-sample tests do not require that the censoring patterns of the two samples 
+are random.  The two versions of the Gehan test in {\sl\bf ASURV} assume 
+that the censoring patterns of the two samples are the same, but 
+the version with hypergeometric variance is more reliable in case of 
+different censoring patterns.  The logrank test results appear to be 
+correct as long as the censoring patterns are not very different.  
+Peto-Prentice seems to be the test least affected by differences in 
+the censoring patterns.  There is little known about the limitations of 
+the Peto-Peto test. These issues are discussed in Prentice and Marek (1979), 
+Latta (1981) and Lawless (1982). 
+
+     Two of the bivariate correlation coefficients, generalized Kendall's tau 
+and Cox regression, are both known to be inaccurate when many tied values
+are present in the data.  Ties are particularly common when the data is
+binned.  Caution should be used in these cases.  It is not known how the
+third correlation method, generalized Spearman's rho,  responds to ties in the
+data.  However, there is no reason to believe that it is more accurate than
+Kendall's tau in this case, and it should also used be with caution in the 
+presence of tied values.
+
+     Cox regression, though widely used in biostatistical  applications,
+formally applies only if the `hazard rate' is constant; that is,  the 
+cumulative distribution function of the censored variable falls 
+exponentially with increasing values.  Astronomical luminosity functions,
+in contrast, are frequently modeled by power law distributions.  It is not 
+clear whether or not the results of a Cox regression are significantly
+affected by this difference.
+
+     There are a variety of limitations to the three linear regression
+methods -- {\sl\bf EM}, {\sl\bf BJ}, and {\sl\bf TWOKM} -- presented here.   
+First, only Schmitt's binned method implemented in {\sl\bf TWOKM} works when 
+censoring is present in both variables.  Second, {\sl\bf\ EM} requires that 
+the  residuals about the fitted line follow a Gaussian distribution.  
+{\sl\bf BJ} and {\sl\bf TWOKM} are less restrictive, requiring only that the 
+censoring distribution about the fitted line is random.  Both we and 
+Schneider (1986) find little difference in the regression 
+coefficients derived from these two methods.  Third, the Buckley-James
+method has a defect in that the final solution occasionally oscillates
+rather than converges smoothly.  Fourth, there is considerable uncertainty 
+regarding the error analysis of the regression coefficients of all three 
+models.  {\sl\bf\ EM} gives analytic formulae based on asymptotic normality, 
+while Avni and Tananbaum (1986) numerically calculate and examine the 
+likelihood surface.  BJ gives an analytic formula for the slope only, but it 
+lies on a weak theoretical foundation.  We now provide Schmitt's bootstrap 
+error analysis for {\sl\bf TWOKM}, although this may be subject to high 
+computational expense for large data sets.  Users may thus wish to run 
+all methods and evaluate the uncertainty with caution.  Fifth, Schmitt's
+binned regression implemented in {\sl\bf TWOKM} has a number of drawbacks
+discussed by Sadler et al. (1989), including slow or failed convergence
+to the two-dimensional Kaplan-Meier distribution, arbitrary choice of
+bin size and origin, and problems if either too many or too few bins are
+selected.  In our judgment, the most reliable linear regression method
+may be the Buckley-James regression, and we suggest that Schmitt's regression
+be reserved for problems with censoring present in both variables. 
+
+    If we consider the field of survival analysis from a broader
+perspective, we note a number of deficiencies with respect to censored 
+statistical problems in astronomy (see Feigelson, 1990).  Most importantly, 
+survival analysis assumes the upper limits in a given experiment are 
+precisely known, while in astronomy they frequently represent n times 
+the RMS noise level in the experimental detector, where n = 2, 3, 5 
+or whatever.  {\bf It is possible that all existing survival methods will
+be inaccurate for astronomical data sets containing many points very close
+to the detection limit.}  Methods that combine the virtues of survival
+analysis (which treat censoring) and measurement error models (which
+treat known measurement errors in both uncensored and censored points)
+are needed. See the discussion by Bickel and Ritov (1992) on this important
+matter.  A related deficiency is the absence of 
+weighted means or regressions associated with censored samples.
+Survival analysis also has not yet produced any true multivariate 
+techniques, such as a Principal Components Analysis that permits 
+censoring.  There also seems to be a  dearth of nonparametric 
+goodness-of-fit tests like the Kolmogorov-Smirnov test.
+
+    Finally, we note that this package - {\sl\bf ASURV} - is not unique. 
+Nearly a dozen software packages for analyzing censored data have been 
+developed (Wagner and Meeker 1985).  Four are part of large multi-purpose 
+commercial statistical software systems:  SAS, SPSS, BMDP, and GLIM.  
+These packages are available on many university central computers. We have 
+found BMDP to be the most useful for astronomers (see Appendices to 
+Feigelson and Nelson 1985, Isobe et al. 1986 for instructions on its use).   
+It provides most of the functions in {\sl\bf KMESTM} and {\sl\bf TWOST} 
+as well as a full Cox regression, but no linear regressions. Other packages 
+(CENSOR, DASH, LIMDEP, STATPAC, STAR, SURVAN, SURVCALC, SURVREG) were written 
+at various universities, medical institutes, publishing houses and industrial 
+labs;  they have not been evaluated by us. 
+ 
+
+\newpage
+\centerline{\Large\bf 3  How to Run ASURV}
+
+\medskip
+\noindent{\large\bf 3.1  Data Input Formats}
+ 
+     {\sl\bf ASURV} is designed to be menu-driven.  There are two basic input
+structures:  a data file, and a command file.  The data file is assumed to
+reside on disk.  For each observed object, it contains the measured value 
+of the variable of interest and an indicator as to whether it is detected
+or not.  Listed below are the possible values that the {\bf censoring indicator
+} can take on.  Upper limits are most common in astronomical applications and
+lower limits are most common in lifetime applications. 
+
+\begin{verbatim}
+
+ For univariate data:    1 : Lower Limit
+                         0 : Detection
+                        -1 : Upper Limit
+
+ For bivariate data:     3 : Both Independent and Dependent Variables are 
+                               Lower Limits
+                         2 : Only independent Variable is a Lower Limit
+                         1 : Only Dependent Variable is a Lower Limit
+                         0 : Detected Point
+                        -1 : Only Dependent Variable is an Upper Limit
+                        -2 : Only Independent Variable is an Upper Limit
+                        -3 : Both Independent and Dependent Variables are
+                               Upper Limits
+
+\end{verbatim}
+
+     The command file may either reside on disk, but is more frequently
+given interactively at the terminal.
+
+     For the univariate program {\sl\bf UNIVAR}, the format of the data file 
+is determined in the subroutine {\sl\bf DATAIN}.  It is currently set 
+at 10*(I4,F10.3) for {\sl\bf KMESTM}, where each column represents a 
+distinct subsample.  For {\sl\bf TWOST}, it is set at I4,10*(I4,F10.3), 
+where the first column gives the sample identification number. Table 1 
+gives an example of a {\sl\bf TWOST} data file called 'gal2.dat'. It 
+shows a hypothetical study where six normal galaxies, six starburst galaxies 
+and six Seyfert galaxies were observed with the IRAS satellite. The variable 
+is the log of the 60-micron luminosity.  The problem we address are the
+estimation of the luminosity functions of each sample, and a determination 
+whether they are different from each other at a statistically significant 
+level.  Command file input formats are given in subroutine {\sl\bf UNIVAR}, 
+and inputs are parsed in subroutines {\sl\bf DATA1} and {\sl\bf DATA2}.  All 
+data input and output formats can be changed by the user as described in 
+appendix {\bf \S A7}.
+
+     For the bivariate program {\sl\bf BIVAR}, the data file format is 
+determined by the subroutine {\sl\bf DATREG}.  It is currently set 
+at I4,10F10.3.  In most cases, only two variables are used with input 
+format I4,2F10.3.  Table 2 shows an example of a bivariate censored problem. 
+ Here one wishes to investigate possible relations between infrared and 
+optical luminosities in a sample of galaxies. {\sl\bf BIVAR} command file 
+input formats are sometimes a bit complex. The examples below illustrate 
+various common cases.  The formats for the basic command inputs are given in 
+subroutine {\sl\bf BIVAR}.  Additional inputs for the Spearman's rho 
+correlation, EM algorithm, Buckley-James method, and Schmitt's method are 
+given in subroutines {\sl\bf R3}, {\sl\bf R4}, {\sl\bf R5}, and {\sl\bf R6} 
+respectively.
+ 
+     The current version of {\sl\bf ASURV} is set up for data sets with 
+fewer than 500 data points and occupies about 0.46 MBy of core memory. 
+For problems with more than 500 points, the parameter values in the 
+subroutines {\sl\bf UNIVAR} and {\sl\bf BIVAR} must be changed as described 
+in appendix {\bf\S A7}.  Note that for  the generalized Kendall's tau 
+correlation coefficient, and possibly other programs,  the computation time 
+goes up as a high power of the number of data points. 
+
+     {\sl\bf ASURV} has been designed to work with data that can 
+contain either upper limits (right censoring) or lower limits (left 
+censoring).  Most of these procedures assume restrictions on the 
+type of censoring present in the data.  Kaplan-Meier estimation and 
+the two-sample tests presented here can work with data that has either 
+upper limits or lower limits, but not with data containing both.  Cox 
+regression, the EM algorithm, and Buckley-James regression can use 
+several independent variables if the dependent variable 
+contains only one type of censored point (it can be either upper or lower 
+limits).  Kendall's tau, Spearman's rho, and Schmitt's binned regression can 
+have mixed censoring, including censoring in the independent variable, but 
+they can only have one independent variable.
+
+\bigskip
+\bigskip
+\noindent{\large\bf 3.2  KMESTM Instructions and Example}
+ 
+     Suppose one wishes to see the Kaplan-Meier estimator for the infrared
+luminosities of the normal galaxies in Table 1. If one runs {\sl\bf ASURV}
+interactively from the terminal, the conversation looks as follows:
+
+\begin{verbatim}
+
+   Data type                :  1         [Univariate data]
+   Problem                  :  1         [Kaplan-Meier]
+   Command file?            :  N         [Instructions from terminal]
+   Data file                :  gal1.dat  [up to 9 characters]
+   Title                    :  IR Luminosities of Galaxies
+                                         [up to 80 characters]
+   Number of variables      :  1         [if several variables in data file] 
+   Name of variable         :  IR        [ up to 9 characters]
+   Print K-M?               :  Y
+   Print out differential
+       form of K-M?         :  Y
+                               25.0      [Starting point is set to 25]
+                               5         [5 bins set]
+                               2.0       [Bin size is set equal to 2]
+   Print original data?     :  Y
+   Need output file?        :  Y
+   Output file              :  gal1.out  [up to 9 characters]
+   Other analysis?          :  N
+
+\end{verbatim}
+If an output file is not specified, the results will be sent to the 
+terminal screen.
+ 
+     If a command file residing on disk is preferred, run {\sl\bf ASURV}
+interactively as above, specifying 'Y' or 'y' when asked if a command file is
+available. The command file would then look as follows:
+\begin{verbatim}
+ 
+   gal1.dat                     ... data file                      
+   IR Luminosities of Galaxies  ... problem title                         
+   1                            ... number of variables    
+   1                            ... which variable?
+   IR                           ... name of the variable        
+   1                            ... printing K-M (yes=1, no=0) 
+   1                            ... printing differential K-M (yes=1, no=0)
+   25.0                         ... starting point of differential K-M
+   5                            ... number of bins
+   2.0                          ... bin size
+   1                            ... printing data (yes=1, no=0)
+   gal1.out                     ... output file              
+
+\end{verbatim}
+All inputs are read starting from the first column.  
+
+     The resulting output is shown in Table 3.  It shows, for example, 
+that the estimated normal galaxy cumulative IR luminosity  function is 0.0
+below log(L) = 26.9, 0.63 $\pm$ 0.21 for 26.9 $<$  log(L) $<$ 28.5, 
+0.83 $\pm$ 0.15 for 28.5 $<$ log(L) $<$ 30.1, and 1.00 above log(L) = 30.1.
+The estimated mean for the sample is 27.8 $\pm$ 0.5.  The 'C' beside two 
+values indicates these are nondetections;  the Kaplan-Meier function does 
+not change at these values.
+
+\bigskip
+\bigskip
+\noindent{\large\bf 3.3  TWOST Instructions and Example}
+
+       Suppose one wishes to see two sample tests comparing the  subsamples
+  in Table 1. If one runs {\sl\bf ASURV} interactively from the terminal, the
+  conversation goes as follows:
+\begin{verbatim}  
+
+   Data type                :     1         [Univariate data]
+   Problem                  :     2         [Two sample test]
+   Command file?            :     N         [Instructions from terminal]
+   Data file                :     gal2.dat  [up to 9 characters]
+   Problem Title            :     IR Luminosities of Galaxies
+                                            [up to 80 characters]
+   Number of variables      :     1 
+                                            [if the preceeding answer is more
+                                             than 1, the number of the variable
+                                             to be tested is now requested]
+   Name of variable         :     IR        [up to 9 characters]
+   Number of groups         :     3
+   Which combination ?      :     0         [by the indicators in column one 
+                                  1          of the data set]
+   Name of subsamples       :     Normal    [up to 9 characters]
+                                  Starburst 
+   Need detail print out ?  :     N
+   Print full K-M?          :     Y 
+   Print out differential
+       form of K-M?         :     N
+   Print original data?     :     N
+   Output file?             :     Y
+   Output file name?        :     gal2.out     [up to 9 characters]
+   Other analysis?          :     N
+ 
+\end{verbatim}
+A command file that performs the same operations goes as follows, after 
+answering 'Y' or 'y' where it asks for a command file:
+\begin{verbatim}
+ 
+    gal2.dat                     ... data file                   
+    IR Luminosities of Galaxies  ... title                      
+    1                            ... number of variables      
+    1                            ... which variable?         
+    IR                           ... name of the variable   
+    3                            ... number of groups        
+    0   1   2                    ... indicators of the groups   
+    0   1   0   1                ... first group for testing 
+                                     second group for testing
+                                     need detail print out ? (if Y:1, N:0)
+                                     need full K-M print out? (if Y:1, N:0)
+    0                            ... printing differential K-M (yes=1, no=0)
+    0                            ... print original data? (if Y:1, N:0)
+    Normal                       ... name of first group    
+    Starburst                    ... name of second group        
+    gal2.out                     ... output file               
+\end{verbatim} 
+     The resulting output is shown in Table 4. It shows that the
+probability that the distribution of IR luminosities of normal and 
+starburst galaxies are similar at the 5\% level in both the Gehan and Logrank 
+tests.
+
+\bigskip
+\bigskip
+\noindent{\large\bf 3.4  BIVAR Instructions and Example}
+
+       Suppose one wishes to test for correlation and perform regression
+between the optical and infrared luminosities for the galaxy sample in
+Table 2. If one  runs {\sl\bf ASURV} interactively from the terminal, the
+conversation looks as follow:
+\begin{verbatim} 
+
+  Data type                :  2         [Bivariate data]
+  Command file?            :  N         [Instructions from terminal]
+  Title                    :  Optical-Infrared Relation 
+                                        [up to 80 characters]
+  Data file                :  gal3.dat  [up to 9 characters]
+  Number of Indep. variable:  1
+  Which methods?           :  1         [Cox hazard model]
+    another one ?          :  Y
+                           :  4         [EM algorithm regression] 
+                           :  N
+  Name of Indep. variable  :  Optical
+  Name of Dep. variable    :  Infrared
+  Print original data?     :  N
+  Save output ?            :  Y
+  Name of Output file      :  gal3.out 
+  Tolerance level ?        :  N          [Default : 1.0E-5]
+  Initial estimate ?       :  N
+  Iteration limits ?       :  Y 
+  Max. iterations          :  50
+  Other analysis?          :  N
+\end{verbatim} 
+
+     The user may notice that the above test run includes several input
+parameters specific to the EM algorithm (tolerance level through maximum 
+iterations).  All of the regression procedures, particularly  Schmitt's
+two-dimensional Kaplan-Meier estimator method that requires specification 
+of the bins, require such extra inputs.  
+
+     A command file that performs the same operations goes as follows, 
+following the request for a command file name:
+\begin{verbatim} 
+Optical-Infrared Relation          ....  title     
+gal3.dat                           ....  data file    
+1   1   2                          ....  1. number of independent variables
+                                         2. which independent variable
+                                         3. number of methods
+1   4                              ....  method numbers (Cox, and EM) 
+Optical  Infrared                  ....  name of indep.& dep
+                                         variables
+0                                  ....  no print of original data
+gal3.out                           ....  output file name 
+1.0E-5                             ....  tolerance  
+0.0       0.0       0.0       0.0  ....  estimates of coefficients
+50                                 ....  iteration  
+\end{verbatim} 
+
+     The resulting output is shown in Table 5. It shows that the
+correlation between optical and IR luminosities is significant at a
+confidence level P $<$ 0.01\%, and the linear fit  is 
+$log(L_{IR})\alpha(1.05 \pm 0.08)*log(L_{OPT})$. It is important to run all 
+of the methods in order to get a more complete understanding of the 
+uncertainties in these estimates.
+
+      If you want to use Buckley-James method, Spearman's rho, or Schmitt's 
+method from a command file, you need the next extra inputs:
+
+\begin{verbatim}
+                          (for B-J method)
+1.0e-5                           tolerance
+30                               iteration
+
+                          (for Spearman's Rho)
+1                                  Print out the ranks used in computation;
+                                    if you do not want, set to 0  
+
+                          (for Schmitt's)
+10  10                             bin # for X & Y
+10                                 if you want to set the binning
+                                   information, set it to the positive
+                                   integer; if not, set to 0.
+1.e-5                              tolerance
+30                                 iteration
+0.5      0.5                       bin size for X & Y
+26.0    27.0                       origins for X & Y
+1                                  print out two dim KM estm;
+                                    if you do not need, set to 0.
+100                                # of iterations for bootstrap error 
+                                    analysis; if you do not want error 
+                                    analysis, set to 0
+-37                                negative integer seed for random number
+                                    generator used in error analysis.
+\end{verbatim}
+\newpage
+
+\centerline{\Large\bf Table 1}
+
+\bigskip
+\bigskip
+
+\centerline{\large\bf Example of UNIVAR Data Input for TWOST}
+
+\bigskip
+
+\centerline{\large\bf IR,Optical and Radio Luminosities of Normal,}
+\centerline{\large\bf  Starburst and Seyfert Galaxies}
+
+\begin{verbatim}
+                                            ____
+                        0   0      28.5       |
+                        0   0      26.9       |
+                        0  -1      29.7     Normal galaxies
+                        0  -1      28.1       |
+                        0   0      30.1       |
+                        0  -1      27.6     ____
+                        1  -1      29.0       |
+                        1   0      29.0       |
+                        1   0      30.2     Starburst galaxies
+                        1  -1      32.4       |
+                        1   0      28.5       |
+                        1   0      31.1     ____
+                        2   0      31.9       |
+                        2  -1      32.3     Seyfert galaxies
+                        2   0      30.4       |
+                        2   0      31.8     ____
+                        |   |         |
+                       #1  #2       #3
+
+                     ---I---I---------I--
+       Column #         4   8        17
+   
+    Note : #1 : indicator of subsamples (or groups)
+                If you need only K-M estimator, leave out this indicator.
+           #2 : indicator of censoring
+           #3 : variable (in this case, the values are in log form)
+\end{verbatim}
+\newpage
+
+\centerline{\Large\bf Table 2}
+
+\bigskip
+\bigskip
+
+\centerline{\large\bf Example of Bivariate Data Input for MULVAR}
+
+\bigskip
+
+\centerline{\large\bf Optical and IR luminosity relation of IRAS galaxies}
+
+\begin{verbatim}
+
+                      0      27.2      28.5 
+                      0      25.4      26.9
+                     -1      27.2      29.7
+                     -1      25.9      28.1  
+                      0      28.8      30.1 
+                     -1      25.3      27.6
+                     -1      26.5      29.0   
+                      0      27.1      29.0  
+                      0      28.9      30.2 
+                     -1      29.9      32.4
+                      0      27.0      28.5
+                      0      29.8      31.1 
+                      0      30.1      31.9   
+                     -1      29.7      32.3  
+                      0      28.4      30.4 
+                      0      29.3      31.8
+                      |       |         |
+                     #1      #2        #3
+                           _________  ______
+                           Optical      IR
+
+                   ---I---------I---------I--
+       Column #       4        13        22
+
+    Note : #1 :  indicator of censoring
+           #2 :  independent variable (may be more Than one)
+           #3 :  dependent variable
+\end{verbatim}
+\newpage
+
+\centerline{\Large\bf Table 3}
+
+\bigskip
+
+\centerline{\large\bf Example of KMESTM Output}
+
+\bigskip
+
+\begin{small}
+\begin{verbatim}
+        KAPLAN-MEIER ESTIMATOR
+    
+        TITLE : IR Luminosities of Galaxies                                                     
+        DATA FILE :  gal1.dat
+    
+        VARIABLE : IR       
+    
+        # OF DATA POINTS :   6 # OF UPPER LIMITS :   3
+    
+          VARIABLE RANGE      KM ESTIMATOR   ERROR
+FROM    0.000   TO   26.900       1.000
+FROM   26.900   TO   28.500       0.375       0.213
+       27.600 C 
+       28.100 C 
+FROM   28.500   TO   30.100       0.167       0.152
+       29.700 C 
+FROM   30.100   ONWARDS           0.000       0.000
+
+      SINCE THERE ARE LESS THAN 4 UNCENSORED POINTS,
+      NO PERCENTILES WERE COMPUTED.
+    
+        MEAN=    27.767 +/- 0.515
+  
+        DIFFERENTIAL KM ESTIMATOR
+        BIN CENTER          D
+  
+         26.000          3.750
+         28.000          1.250
+         30.000          1.000
+         32.000          0.000
+         34.000          0.000
+                       -------
+          SUM =          6.000
+  
+ (D GIVES THE ESTIMATED DATA POINTS IN EACH BIN)
+        INPUT DATA FILE: gal1.dat 
+        CENSORSHIP     X 
+               0    28.500
+               0    26.900
+              -1    29.700
+              -1    28.100
+               0    30.100
+              -1    27.600
+
+\end{verbatim}
+\end{small}
+\newpage
+
+
+\centerline{\Large\bf Table 4}
+
+\bigskip
+
+\centerline{\large\bf Example of TWOST Output}
+
+\bigskip
+
+\begin{small}
+\begin{verbatim} 
+           ******* TWO SAMPLE TEST ******
+
+        TITLE : IR Luminosities of Galaxies                                                     
+        DATA SET : gal2.dat 
+        VARIABLE : IR       
+        TESTED GROUPS ARE Normal    AND Starburst
+     
+      # OF DATA POINTS :  12, # OF UPPER LIMITS :   5
+      # OF DATA POINTS IN GROUP I  :   6
+      # OF DATA POINTS IN GROUP II :   6
+     
+        GEHAN`S GENERALIZED WILCOXON TEST -- PERMUTATION VARIANCE
+     
+          TEST STATISTIC        =       1.652
+          PROBABILITY           =       0.0986
+
+     
+        GEHAN`S GENERALIZED WILCOXON TEST -- HYPERGEOMETRIC VARIANCE
+     
+          TEST STATISTIC        =       1.687
+          PROBABILITY           =       0.0917
+
+     
+        LOGRANK TEST 
+     
+          TEST STATISTIC        =       1.814
+          PROBABILITY           =       0.0696
+
+     
+        PETO & PETO GENERALIZED WILCOXON TEST
+     
+          TEST STATISTIC        =       1.730
+          PROBABILITY           =       0.0837
+
+     
+        PETO & PRENTICE GENERALIZED WILCOXON TEST
+     
+          TEST STATISTIC        =       1.706
+          PROBABILITY           =       0.0881
+
+    
+    
+        KAPLAN-MEIER ESTIMATOR
+    
+        DATA FILE :  gal2.dat
+    
+        VARIABLE : Normal   
+    
+        # OF DATA POINTS :   6 # OF UPPER LIMITS :   3
+    
+          VARIABLE RANGE      KM ESTIMATOR   ERROR
+FROM    0.000   TO   26.900       1.000
+FROM   26.900   TO   28.500       0.375       0.213
+       27.600 C 
+       28.100 C 
+FROM   28.500   TO   30.100       0.167       0.152
+       29.700 C 
+FROM   30.100   ONWARDS           0.000       0.000
+    
+
+      SINCE THERE ARE LESS THAN 4 UNCENSORED POINTS,
+      NO PERCENTILES WERE COMPUTED.
+    
+        MEAN=    27.767 +/- 0.515
+    
+    
+        KAPLAN-MEIER ESTIMATOR
+    
+        DATA FILE :  gal2.dat
+    
+        VARIABLE : Starburst
+    
+        # OF DATA POINTS :   6 # OF UPPER LIMITS :   2
+    
+          VARIABLE RANGE      KM ESTIMATOR   ERROR
+FROM    0.000   TO   28.500       1.000
+FROM   28.500   TO   29.000       0.600       0.219
+       29.000 C 
+FROM   29.000   TO   30.200       0.400       0.219
+FROM   30.200   TO   31.100       0.200       0.179
+FROM   31.100   ONWARDS           0.000       0.000
+       32.400 C 
+    
+        PERCENTILES    
+         75 TH     50 TH     25 TH
+         17.812    28.750    29.900
+    
+        MEAN=    29.460 +/- 0.460
+\end{verbatim}
+\end{small}
+\newpage
+
+
+\centerline{\Large\bf Table 5}
+
+\bigskip 
+\bigskip 
+
+\centerline{\large\bf Example of BIVAR Output}
+
+\bigskip
+
+\begin{center}
+\begin{verbatim}
+
+     
+      CORRELATION AND REGRESSION PROBLEM
+      TITLE IS  Optical-Infrared Relation                                                       
+     
+      DATA FILE IS gal3.dat 
+     
+     
+      INDEPENDENT       DEPENDENT
+        Optical   AND    Infrared
+     
+     
+      NUMBER OF DATA POINTS :    16
+      UPPER LIMITS IN  Y    X    BOTH   MIX
+                       6    0       0    0
+     
+    
+     CORRELATION TEST BY COX PROPORTIONAL HAZARD MODEL
+    
+       GLOBAL CHI SQUARE =   18.458 WITH 
+               1 DEGREES OF FREEDOM
+       PROBABILITY    =    0.0000
+    
+          
+    LINEAR REGRESSION BY PARAMETRIC EM ALGORITHM
+          
+       INTERCEPT COEFF    :  0.1703  +/-  2.2356
+       SLOPE COEFF 1      :  1.0519  +/-  0.0793
+       STANDARD DEVIATION :  0.3687
+       ITERATIONS         : 27
+          
+
+
+\end{verbatim}
+\end{center}
+ 
+\newpage
+
+\centerline{\Large\bf 4  Acknowledgements}
+ 
+     The production and distribution of {\sl\bf ASURV Rev 1.2} was 
+principally funded at Penn State by 
+a grant from the Center for Excellence in Space Data and Information
+Sciences (operated by the Universities Space Research Association in
+cooperation with NASA), NASA grants NAGW-1917 and NAGW-2120, and
+NSF grant DMS-9007717. T.I. was supported by NASA grant NAS8-37716.
+We are grateful to Prof. Michael Akritas (Dept. of Statistics, Penn 
+State) for advice and guidance on mathematical issues, and
+to Drs. Mark Wardle (Dept. of Physics and Astronomy, Northwestern
+University), Paul Eskridge (Harvard-Smithsonian Center for Astrophysics),
+Eric Smith (Laboratory for Astronomy and Solar Physics, NASA-Goddard
+Space Flight Center) and Eric Jensen (Wisconsin)
+for generous consultation and assistance on the coding.
+We would also like to thank Drs. Peter Allan (Rutherford Appleton Laboratory),
+Simon Morris (Carnegie Observatories), Karen Strom (UMASS), and Marco
+Lolli (Bologna) for their help in debugging {\sl\bf ASURV Rev 1.0}.
+
+\newpage
+
+\bigskip
+\centerline{\Large\bf APPENDICES}
+
+\bigskip
+\bigskip
+\noindent{\large\bf A1  Overview of Survival Analysis }
+  
+     Statistical methods dealing with censored data have a long and
+confusing history.  It began in the 17th century with the development of
+actuarial mathematics for the life insurance industry and demographic 
+studies.  Astronomer Edmund Halley was one of the founders. In the
+mid-20th century, this application grew along with biomedical and clinical
+research into a major field of biometrics. Similar (and sometimes 
+identical) statistical methods were  being developed in two other fields:
+the theory of reliability, with industrial and engineering applications; 
+and econometrics, with attempts to understand the relations between
+economic forces in groups of people. Finally, we find the same mathematical
+problems and some of the same solutions arising in modern astronomy as
+outlined in {\bf \S 1} above.
+ 
+     Let us give an illustration on the use of survival analysis in these
+disparate fields.  Consider a linear regression problem.   First, an 
+epidemiologist wishes to determine how the human longevity or `survival time' 
+(dependent variable) depends on the number of cigarettes smoked per day 
+(independent variable).  The experiment lasts 10 years, during which some 
+individuals die  and others do not. The survival time of the living 
+individuals is only known to be greater than their age when the experiment
+ends. These values are therefore `right censored data points'.  Second, 
+an engine manufacturing company engines wishes to know the average time 
+between breakdowns as a function of engine speed to determine the optimal
+operating range.  Test engines are set running until 20\% of them fail; 
+the average `lifetime' and dependence on speed is then calculated with 
+80\% of the data points right-censored.  Third, an astronomer observes a sample
+of nearby galaxies in the far-infrared to determine the relation between 
+dust and molecular gas.  Half have detected infrared luminosities  but 
+half are upper limits (left-censored data points).  The astronomer then seeks
+the relationship between infrared luminosities and the CO traces of molecular
+material to investigate star formation efficiency.  The CO observations may 
+also contain censored values.
+ 
+     Astronomers have dealt with their upper limits in a number of
+fashions.  One is to consider only detections in the analysis; while
+possibly acceptable for some purposes (e.g. correlation),  this will 
+clearly bias the results in others (e.g. estimating  luminosity functions).
+A second procedure considers the ratio of detected objects to observed 
+objects in a given sample. When plotted in a range of luminosity bins, 
+this has been called the `fractional luminosity function' and has been 
+frequently used in extragalactic radio astronomy.  This is mathematically 
+the same as actuarial life tables.  But it is sometimes used incorrectly 
+in comparing different samples:  the detected fraction clearly depends on 
+the (usually uninteresting) distance to the objects as well as their
+(interesting)  luminosity.  Also, simple $sqrt$N error bars do not
+apply in these fractional luminosity functions, as is frequently assumed. 
+ 
+     A third procedure is to take all of the data, including the exact
+values of the upper limits, and model the properties of   the parent
+population under certain mathematical constraints, such as maximizing 
+the likelihood that the censored points follow the same distribution as the
+uncensored points.  This technique, which is at the root of much of modern 
+survival analysis, was independently developed by astrophysicists (Avni et al.
+1980; Avni and Tananbaum 1986) and is now commonly used in observational
+astronomy. 
+
+     The advantage accrued in learning and using survival analysis methods 
+developed in biometrics, econometrics, actuarial and reliability
+mathematics is the wide range of useful techniques developed in these 
+fields. In general, astronomers can have faith in the mathematical validity
+of survival analysis.  Issues of great social importance (e.g.
+establishing Social Security benefits, strategies for dealing with the 
+AIDS epidemic, MIL-STD reliability standards) are based on it. In detail,
+however, astronomers must study the assumptions underlying each method and
+be aware that some methods at the  forefront of survival analysis that may 
+not be fully understood.
+ 
+     \S {\bf A2} below gives a bibliography of selected works concerning 
+survival analysis statistical methods.  We have listed some  recent
+monographs from the biometric and reliability field that we have found to
+be useful (Kalbfleisch and Prentice 1980; Lee 1980;  Lawless 1982; Miller
+1981; Schneider 1986), as well as one from econometrics (Amemiya 1985). 
+Papers from the astronomical literature dealing with these methods include
+Avni et al. (1980), Schmitt (1985), Feigelson and Nelson (1985), Avni and 
+Tananbaum (1986), Isobe et al. (1986), and Wardle and Knapp (1986).  It is
+important to recognize that the methods presented in these papers and in 
+this software package represent only a small part of the entire body of 
+statistical methods applicable to censored data.
+
+
+\bigskip
+\bigskip
+\noindent{\large\bf A2  Annotated Bibliography}
+
+\begin{description}
+\item [] Akritas, M. ``Aligned Rank Tests for Regression With Censored Data'',
+   Penn State Dept. of Statistics Technical Report, 1989. \\
+   {\it Source for ASURV's generalized Spearman's rho computation.}
+
+\item [] Amemiya, T.  {\bf Advanced Econometrics} (Harvard U. Press:Cambridge 
+   MA) 1985. \\
+   {\it Reviews econometric `Tobit' regression models including censoring.}
+
+\item [] Avni, Y., Soltan, A., Tananbaum, H. and Zamorani, G. ``A Method for 
+   Determining Luminosity Functions Incorporating Both Flux Measurements 
+   and Flux Upper Limits, with Applications to the Average X-ray to Optical 
+   Luminosity Ration for Quasars", {\bf Astrophys. J.} 235:694 1980. \\
+   {\it The discovery paper in the astronomical literature for the 
+   differential Kaplan-Meier estimator.}
+
+\item [] Avni, Y. and Tananbaum, H. ``X-ray Properties of Optically Selected 
+    QSOs",     {\bf Astrophys. J.} 305:57 1986. \\
+   {\it The discovery paper in the astronomical literature of the linear 
+    regression with censored data for the Gaussian model.}
+
+\item [] Bickel, P.J and Ritov, Y. ``Discussion:  `Censoring in 
+    Astronomical Data Due
+    to Nondetections' by Eric D. Feigelson'', in {\bf Statistical Challenges
+    in Modern Astronomy}, eds. E.D. Feigelson and G.J. Babu, (Springer-Verlag:
+    New York) 1992. \\
+    {\it A discussion of the possible inadequacies of survival analysis for
+    treating low signal-to-noise astronomical data.}
+
+\item [] Brown, B .J. Jr., Hollander, M., and Korwar, R. M. ``Nonparametric 
+    Tests of Independence for Censored Data, with Applications to Heart 
+    Transplant Studies" from {\bf Reliability and Biometry}, eds. F. Proschan 
+    and R. J. Serfling (SIAM: Philadelphia) p.327 1974.\\
+    {\it Reference for the generalized Kendall's tau correlation coefficient.}
+
+\item [] Buckley, J. and James, I. ``Linear Regression with Censored Data", 
+    {\bf Biometrika} 66:429 1979.\\
+    {\it Reference for the linear regression with Kaplan-Meier residuals.}
+
+\item [] Feigelson, E. D. ``Censored Data in Astronomy'', {\bf Errors,
+    Bias and Uncertainties in Astronomy}, eds. C. Jaschek and F. Murtagh,
+    (Cambridge U. Press: Cambridge) p. 213 1990.\\
+    {\it A recent overview of the field.}
+
+\item [] Feigelson, E. D. and Nelson, P. I. ``Statistical Methods for 
+    Astronomical Data with Upper Limits: I. Univariate Distributions", 
+    {\bf Astrophys. J.} 293:192 1985.\\
+    {\it Our first paper, presenting the procedures in UNIVAR here.}
+
+\item [] Isobe, T., Feigelson, E. D., and Nelson, P. I. ``Statistical Methods 
+    for Astronomical Data with Upper Limits: II. Correlation and Regression",
+    {\bf Astrophys. J.} 306:490 1986.\\
+    {\it Our second paper, presenting the procedures in BIVAR here.}
+
+\item [] Isobe, T. and Feigelson, E. D. ``Survival Analysis, or What To Do with
+    Upper Limits in Astronomical Surveys", {\bf Bull. Inform. Centre Donnees
+    Stellaires}, 31:209 1986.\\
+    {\it A precis of the above two papers in the Newsletter of Working Group 
+    for Modern Astronomical Methodology.}
+
+\item [] Isobe, T. and Feigelson, E. D. ``ASURV'', {\bf Bull. Amer. Astro.
+    Society}, 22:917 1990.\\
+    {\it The initial software report for ASURV Rev 1.0.}
+
+\item [] Kalbfleisch, J. D. and Prentice, R. L. {\bf The Statistical Analysis 
+    of Failure Time Data} (Wiley:New York) 1980.\\
+    {\it A well-known monograph with particular emphasis on Cox regression.}
+
+\item [] Latta, R. ``A Monte Carlo Study of Some Two-Sample Rank Tests With
+    Censored Data'', {\bf Jour. Amer. Stat. Assn.}, 76:713 1981. \\
+    {\it A simulation study comparing several two-sample tests available in
+    ASURV.}
+
+\item [] LaValley, M., Isobe, T. and Feigelson, E.D. ``ASURV'', {\bf Bull.
+    Amer. Astro. Society} 1992
+    {\it The new software report for ASURV Rev. 1.1.}
+
+\item [] Lawless, J. F. {\bf Statistical Models and Methods for Lifetime Data}
+    (Wiley:New York) 1982.\\
+    {\it A very thorough monograph, emphasizing parametric models and
+    engineering applications.}
+
+\item [] Lee, E. T. {\bf Statistical Methods for Survival Data Analysis}
+    (Lifetime Learning Pub.:Belmont CA) 1980.\\
+    {\it Hands-on approach, with many useful examples and Fortran programs.}
+
+\item [] Magri, C., Haynes, M., Forman, W., Jones, C. and Giovanelli, R.
+    ``The Pattern of Gas Deficiency in Cluster Spirals: The Correlation of
+    H I and X-ray Properties'', {\bf Astrophys. J.} 333:136 1988. \\
+    {\it A use of bivariate survival analysis in astronomy, with a
+    good discussion of the applicability of the methods.}
+
+\item [] Millard, S. and Deverel, S. ``Nonparametric Statistical Methods for
+    Comparing Two Sites Based on Data With Multiple Nondetect Limits'',
+    {\bf Water Resources Research}, 24:2087 1988. \\
+    {\it A good introduction to the two-sample tests used in ASURV, written
+    in nontechnical language.}
+
+\item [] Miller, R. G. Jr. {\bf Survival Analysis} (Wiley, New York) 1981.\\
+    {\it A good introduction to the field; brief and informative lecture notes
+    from a graduate course at Stanford.}
+
+\item [] Prentice, R. and Marek, P. ``A Qualitative Discrepancy Between 
+    Censored Data Rank Tests'', {\bf Biometrics} 35:861 1979. \\
+    {\it A look at some of the problems with the Gehan two-sample test, using
+    data from a cancer experiment.}
+
+\item[] Sadler, E. M., Jenkins, C. R.  and Kotanyi, C. G..
+    ``Low-Luminosity Radio Sources in Early-Type Galaxies'', 
+    {\bf Mon. Not. Royal Astro. Soc.} 240:591 1989. \\
+    {\it An astronomical application of survival analysis, with 
+    useful discussion of the methods in the Appendices.}
+
+\item [] Schmitt, J. H. M. M. ``Statistical Analysis of Astronomical Data 
+    Containing Upper Bounds: General Methods and Examples Drawn from X-ray 
+    Astronomy", {\bf Astrophys. J.} 293:178 1985.\\
+    {\it Similar to our papers, a presentation of survival analysis for 
+    astronomers.  Derives {\sl\bf TWOKM} regression for censoring in both 
+    variables.}
+
+\item [] Schneider, H. {\bf Truncated and Censored Samples from Normal 
+    Populations} (Dekker: New York) 1986.\\
+    {\it Monograph specializing on Gaussian models, with a good discussion of 
+    linear regression.}
+
+\item [] Wagner, A. E. and Meeker, W. Q. Jr. ``A Survey of Statistical Software
+    for Life Data Analysis", in {\bf 1985 Proceedings of the Statistical 
+    Computing Section}, (Amer. Stat. Assn.:Washington DC), p. 441.\\
+    {\it Summarizes capabilities and gives addresses for other software
+     packages.}
+
+\item [] Wardle, M. and Knapp, G. R. ``The Statistical Distribution of the 
+    Neutral-Hydrogen Content of S0 Galaxies", {\bf Astron. J.} 91:23 1986.\\
+    {\it Discusses the differential Kaplan-Meier distribution and its error
+    analysis.}
+
+\item [] Wolynetz, M. S. ``Maximum Likelihood Estimation in a Linear Model 
+    from     Confined and Censored Normal Data", {\bf Appl. Stat.} 28:195 
+    1979.\\
+    {\it Published Fortran code for the EM algorithm linear regression.}
+
+\end{description}
+
+\bigskip
+\bigskip
+
+
+\noindent{\Large\bf A3 Rev 1.1 Modifications and Additions}
+
+     Each of the three major areas of {\sl\bf ASURV}; the KM 
+estimator, the two-sample tests, and the bivariate methods have been 
+updated in going from Rev 0.0 to Rev 1.1. 
+
+\noindent{\large\bf A3.1 KMESTM}
+
+     In the Survival Analysis literature, the value of the survival function
+at a x-value is the probability that a given observation will be at least as
+large as that x-value.  As a result, the survival curve starts with a 
+value of one and declines to zero as the x-values increase.  The 
+KM estimate of the survival curve should mirror this behavior by 
+starting at one and declining to zero as more and more of the observations
+are passed.  In Rev 0.0, the KM estimate for right-censored (lower limits) 
+data was given in that form, but the KM estimate for left-censored
+(upper limits) data started at zero and increased to one.  As a result,
+the x-values where jumps in the KM estimate occurred were correct, and the 
+jumps were of the correct height, but the reported survival value at most 
+points were (in a strict sense) incorrect.  In Rev 1.1, this has been
+corrected so that the KM estimate will move in the proper direction for both
+upper limits and lower limits data.  
+
+     A differential, or binned, Kaplan-Meier estimate has also been added to
+the package.  This allows the user to find the number of points falling into
+specified bins along the X-axis according to the Kaplan-Meier estimated
+survival curve.  However, astronomers are strongly encouraged to use the
+integral KM for which analytic error analysis is available.  There is
+{\bf no known error analysis} for the differential KM.
+
+\noindent{\large\bf A3.2 TWOST}
+
+     In Rev 0.0 the code for two-sample tests relied heavily on code published
+in {\bf Statistical Methods for Survival Data Analysis} by E.T. Lee.  Since the
+publication of this book in 1980, there have been several articles and 
+simulation studies done on the various two-sample tests.  Lee's book 
+uses a permutation variance for its tests, which assumes that both 
+groups being considered are subject to the same censoring pattern.  Tests 
+with hypergeometric variance form seem to be more `robust' against differences
+in the censoring patterns, and some statistical software packages 
+($e.g.$ SAS) have replaced permutation variances with hypergeometric variances.
+We have also realized that Rev 0.0 presented Lee's Peto-Peto test, rather
+than the Peto-Prentice test described in Feigelson and Nelson (1985) and the
+Rev. 0.0 {\sl\bf ASURV} manual.
+
+     In light of these developments we have modified the two-sample tests
+calculated in {\sl\bf ASURV}.  Rev 1.1 offers two versions of 
+Gehan's test:  one with permutation variance (which will match the Gehan's 
+test value from Rev 0.0) and one with hypergeometric variance.  The logrank 
+test now uses a hypergeometric variance, but the Peto-Peto test still uses a 
+permutation variance.  The Cox-Mantel test has been removed as it was very
+similar to the logrank test, and the Peto-Prentice test has been added.  The
+Peto-Prentice test uses an asymptotic variance form that has been shown to
+do very well in simulation studies (Latta, 1981).
+
+     {\sl\bf ASURV} now automatically does all the two-sample tests, 
+instead of asking the user to specify which tests to run.  These tests 
+are not very time consuming and the user will do well to consider 
+the results of all the tests.  If the p-values differ significantly, 
+then the Peto-Prentice test is probably the most reliable (Prentice 
+and Marek, 1979).  The two-sample tests all use different, but 
+reasonable, weightings of the data points, so large discrepancies 
+between the results of the tests indicates that caution should be 
+used in drawing conclusions based on this data.
+
+\noindent{\large\bf A3.3 BIVAR}
+
+     The bivariate methods have been extended in two ways.  First,
+standard error estimates for the slope and intercept are offered for
+Schmitt's method of linear regression.  These error estimates are
+based upon the bootstrap, a statistical technique which randomly 
+resamples the set of data points, with replacement, many times
+and then runs Schmitt's procedure on the artificial data sets created by the
+resampling.  Two hundred iterations is considered sufficient to get reasonable 
+estimates of the standard error of the estimate in most situations.  
+However, this might be computationally intensive for a large data set.
+
+     
+     The bivariate methods have also been extended by an
+additional correlation routine, a generalized Spearman's rho procedure 
+(Akritas 1990).  The usual Spearman's rho correlation estimate for uncensored 
+data is simply the correlation between the ranks of the independent and 
+dependent variables.  In order to extend the procedure to censored data, the
+Kaplan-Meier estimate of the survival curve is used to assign ranks to the
+observations.  Consequently, the ranks assigned to the observations may not 
+be whole numbers.  Censored points are assigned half (for left-censored)
+or twice (for right-censored) the rank that they would have had were
+they uncensored.  This method is based on preliminary findings and 
+has not been carefully scrutinized either theoretically or empirically.  It is
+offered in the code to serve as a less computer intensive approximation to the
+Kendall's tau correlation, which becomes computationally infeasible for large 
+data sets (n $>$ 1000).  {\it The generalized Spearman's Rho routine is not 
+dependable for small data sets (n $<$ 30)}.  In that situation the generalized
+Kendall's tau routine should be relied upon.  It should also be noted that 
+the test statistics reported by {\sl\bf ASURV} for Kendall's tau and Spearman's
+rho are not directly comparable.  The test statistic reported for Spearman's
+rho is an estimated correlation, and the test statistic given for Kendall's
+tau is an estimated function of the correlation.  It is the reported
+probabilities that should be compared.
+
+\noindent{\large\bf A3.4 Interface, Outputs and Manual}
+
+     The screen-keyboard interface has been streamlined somewhat.  For
+example. the user is now provided all two-sample tests without requesting 
+them individually.  New inputs have been introduced for the new programs
+(differential Kaplan-Meier function, the generalized Spearman's rho, and
+error analysis for Schmitt's regression).  The printed outputs of the
+programs have been clarified in several places where ambiguities were
+reported.  For example, the Kaplan-Meier estimator now specifies whether the
+change occurs before or after a given value, the meaning of the correlation
+probabilities is now given explicitly, and warnings are printed when there
+is good reason to suspect the results of a test are unreliable.  
+The Users Manual has been reorganized so that material that is not actually 
+needed to operate the program has been located in several Appendices.  
+
+\bigskip
+ 
+\bigskip
+
+\noindent{\Large\bf A4  Errors Removed in Rev 1.1}
+
+     Since {\sl\bf ASURV} was released in November 1991, several errors
+have been discovered in the package by users and have been reported to us.
+In revision 1.1, all the bugs that have been reported are corrected.  We
+have also taken the opportunity to correct some subtle programming errors that
+we came across in the code.  The major errors were:
+
+\begin{itemize}
+
+  \item The command files gal1.com and gal2.com, provided in asurv.etc did not
+        match the new input formats.  This caused the output files created by
+        the command files not to match the examples in the manual.
+
+  \item The character variable containing the name of the data file was
+        not defined properly in the subroutine which prints out the results of
+        Kaplan-Meier estimation.
+
+  \item In subroutine TWOST, the variable WRK6 was wrongly specified as WWRK6.
+
+  \item Various problems with truncation and integer arithmetic were found
+        and removed from the code.
+
+  \item To help VAX/VMS users, a carriage control line was added to {\sl\bf 
+        ASURV}.  For information on this addition, look in {\bf \S A7}
+
+\end{itemize}
+
+
+\bigskip
+
+\noindent{\Large\bf A5 Errors removed in Rev 1.2}
+
+     After releasing {\sl\bf ASURV} Rev 1.1 in March 1992, we determined that
+Rev. 1.1, and all previous versions, contained an inconsistency in the
+way the Kaplan-Meier routine treated certain data sets.  The problem occurred 
+when multiple upper limits were tied at the smallest data point, or when
+multiple lower limits were tied at the largest data point.  Since such an 
+event would be very unlikely in the biomedical setting, and {\sl\bf ASURV}
+was initially modeled on biomedical software, no contingency for such a
+situation was contained in the package.  However, this type of censoring
+occurs commonly in astronomical applications, so the package has been 
+modified to reflect this.  The Kaplan-Meier routine in Rev 1.2 temporarily 
+changes all such tied censored points to detections so they can be 
+treated consistently.
+
+{\it Other reported bugs:}  Two bugs are present in the univariate
+two-sample tests.  First, the generalized Wilcoxon and Peto-Prentice 
+univariate two-sample tests may give different results of one switches 
+the sample identifiers when ties are present.  Second, in certain unlikely 
+circumstances when the user runs multiple tests without exiting ASURV, slight 
+changes in test results may be seen.  
+
+\bigskip
+
+\noindent{\Large\bf A6  Obtaining and Installing ASURV}
+ 
+     This program is available as a stand-alone package  to any member of 
+the astronomical community without charge.  We provide the FORTRAN source code,
+not the executable files. We prefer to distribute it by electronic mail.  
+Scientists with network connectivity should send their request to:
+
+\begin{center}
+\begin{verbatim}
+                               code@stat.psu.edu
+\end{verbatim}
+\end{center}
+
+\noindent specifying {\sl\bf `ASURV Rev. 1.1'} and providing both email and 
+regular mail addresses.   ASCII versions of the code can also be mailed, if 
+necessary,  on a 3 1/2-inch double-sided high-density MS-DOS diskette, or a
+1/2 inch 9-track tape (1600 BPI, written on a UNIX machine).  For any 
+questions regarding the package, contact:
+
+\begin{center}
+\begin{verbatim}
+                             Prof. Eric Feigelson 
+                   Department of Astronomy & Astrophysics
+                        Pennsylvania State University 
+                          University Park PA  16802
+
+                          Telephone: (814) 865-0162 
+                               Telex: 842-510  
+                          Email: edf@astro.psu.edu
+\end{verbatim}
+\end{center}
+
+The package consists of 59 subroutines of Fortran totally about 1/2 MBy. It
+is completely self-contained, requiring no external libraries or programs.  The
+code is distributed in ten files: a brief READ.ME file; six files 
+called asurv1.f-asurv6.f containing the source code; two documentation files,
+with the users manual in ASCII and LaTeX; and one file called asurv.etc
+containing test datasets, test outputs and a subroutine list. We request 
+that  recipients not 
+distribute the package themselves beyond their own institution.  Rev. 0.0
+of {\sl\bf ASURV} has been incorporated into the larger astronomical software 
+system SDAS/IRAF, distributed by the Space Telescope Science Institute. 
+ 
+     Installation requires removing the email headers, Fortran 
+compilation, linking, and executing.  We have written the code
+consistent with Fortran 77 conventions.  It has been successfully ported
+to a Sun SPARCstation under UNIX, a DEC VAX under VMS, a personal computer
+under MS-DOS using Microsoft FORTRAN, and an IBM mainframe under VM/CMS.
+It can also be ported to a Macintosh with small format changes (see \S
+{\bf A7} below).  
+\footnote{SPARCstation is a trademark of Sun Microsystems, Inc; UNIX is a 
+trademark of AT\& T Corporation; VAX and VMS are trademarks of Digital 
+Equipment Corporation; MS-DOS and Microsoft FORTRAN are trademarks of
+Microsoft Corporation; VM/CMS is a trademark of International
+Business Machines Corporation; and Macintosh is a trademark of Apple
+Corporation.}
+When {\sl\bf ASURV} is compiled using Microsoft FORTRAN the
+user will notice several warnings from the compiler about labels used across
+blocks and formal arguments not being used.  The user should not be alarmed,
+these warnings are caused by the compilation of the subroutines separately
+and do not reflect program errors.
+
+     All of the functions have been tested against textbook formulae, 
+published examples, and/or commercial software  packages.  However, some 
+methods are not widely used by researchers in other fields, and their behavior
+is not well-documented.  We would appreciate hearing about any difficulties or
+unusual behavior encountered when running the code. A bug report form for
+{\sl\bf ASURV} can be found in the asurv.etc file. 
+
+\bigskip
+\bigskip
+
+\noindent{\Large\bf A7  User Adjustable Parameters}
+
+       {\sl\bf ASURV} is initially set to handle data sets of up to 
+500 points, with up to  four variables, however a user may wish to 
+consider even larger data sets.  With this in mind, we have modified 
+Rev 1.1 to be easy for a user to adjust to a given sample size.
+
+       The sizes of all the arrays in {\sl\bf ASURV} are controlled by 
+two parameter statements; one is in {\sl\bf UNIVAR} and one is in 
+{\sl\bf BIVAR}.  Both statements are currently of the form:
+
+\begin{verbatim}
+                  PARAMETER(MVAR=4,NDAT=500,IBIN=50)
+\end{verbatim}  
+
+MVAR is the number of variables allowed in a data set 
+and NDAT is the number of observations allowed in a data set.  To work 
+with larger data sets, it is only necessary to change the values MVAR and/or 
+NDAT in the two parameter statements.  If MVAR is set to be greater 
+than ten, then the data input formats should also be changed to read more 
+than ten variables from the data file.  Clearly, adjusting either MVAR or NDAT
+upwards will increase the memory space required to run {\sl\bf ASURV}.
+
+       The following table provides listings of format statements that a user 
+might wish to change if data values do not match the default formats:  
+
+\begin{verbatim}
+Input Formats:
+
+Problem          Subroutine    Default Format      
+-------          ----------    --------------
+Kaplan-Meier     DATAIN        Statement    30   FORMAT(10(I4,F10.3))
+Two Sample tests 
+                 DATAIN                     40   FORMAT(I4,10(I4,F10.3))
+Correlation/Regression
+                 DATREG                     20   FORMAT(I4,11F10.3)
+
+
+
+
+Output Formats:
+
+Problem          Subroutine     Default Format
+-------          ----------     --------------
+Kaplan-Meier     KMPRNT         Statements  550 [For Uncensored Points] 
+                                            555 [For Censored Points]  
+                                            850 [For Percentiles]
+                                           1000 [For Mean]
+                 KMDIF                      680 [For Differential KM]
+
+Two Sample Tests TWOST          Statements 612, 660, 665,780
+        
+
+Problem          Subroutine     Default Format
+-------          ----------     --------------
+Correlation/Regression
+ Cox Regression  COXREG         Statements 1600, 1651, 1650
+ Kendall's Tau   BHK                       2005, 2007
+ Spearman's Rho  SPRMAN                     230, 240, 250, 997
+ EM Algorithm    EM                        1150, 1200, 1250, 1300, 1350
+ Buckley-James   BJ                        1200, 1250, 1300, 1350
+ Schmitt         TWOKM                     1710, 1715, 1720, 1790, 1795, 1800,
+                                                 1805, 1820
+ 
+\end{verbatim}                             
+
+     Macintosh users who have Microsoft Fortran may have difficulty with the
+statements that read from the keyboard and write to the screen.  Throughout
+{\sl\bf ASURV} we have used statements of the form,
+\begin{verbatim}
+           WRITE(6,format)        READ(5,format).
+\end{verbatim}
+Macintosh users may wish to replace the 6 and 5 in statements of the above
+type by `*'.
+           
+     VAX/VMS users may notice that the first character of some statements
+sent to the screen is not printed.  This can be corrected by removing the 'C' 
+at the start of the following statement, in the {\sl\bf ASURV} subroutine,
+\begin{verbatim}
+     C      OPEN(6,CARRIAGECONTROL='LIST',STATUS='OLD')
+\end{verbatim}
+
+     Finally, if the data have values which extend beyond three decimal places,
+then the user should reduce the value of `CONST' in the subroutine 
+{\sl\bf CENS} to have at least two more decimal places than the data.
+
+
+\newpage
+\noindent{\Large\bf A8  List of subroutines}
+
+     The following is an alphabetic listing of all the subroutines 
+used in {\sl\bf ASURV} and their respective byte lengths.
+
+
+\bigskip
+\bigskip
+\centerline{\large\bf Subroutine List}
+
+\bigskip
+\begin{center}
+\begin{tabular}{|ll|ll|ll|} \hline
+   Subroutine & Bytes & Subroutine & Bytes & Subroutine & Bytes  \\ \hline
+&&&&& \\
+                AARRAY &4863 & FACTOR &1207 & REARRN & 3057 \\
+                AGAUSS &1345 & GAMMA &1520 & REGRES & 5505 \\
+                AKRANK &5887 & GEHAN &3477 & RMILLS & 1448 \\
+                ARISK &2675 & GRDPRB &11995 & SCHMIT & 8258\\
+                ASURV &7448 & KMADJ &3758 & SORT1 & 2512\\
+                BHK &6936 & KMDIF &5058 & SORT2 & 2214\\
+                BIN &15950 & KMESTM &7570 & SPEARHO & 2021\\
+                BIVAR &28072 & KMPRNT &8363 & SPRMAN & 8743\\
+                BJ &5750 & LRANK &6237 & STAT & 1859\\
+                BUCKLY &9830 & MATINV &3495 & SUMRY & 2324\\
+                CENS &2225 & MULVAR &15444 & SYMINV & 3007\\
+                CHOL &2672 & PCHISQ &2257 & TIE & 2784\\
+                COEFF &1948 & PETO &8054 & TWOKM & 16447\\
+                COXREG &8032 & PLESTM &6122 & TWOST & 15877\\
+                DATA1 &2650 & PWLCXN &2158 & UNIVAR & 27677\\
+                DATA2 &3470 & R3 &1629 & UNPACK & 1702\\
+                DATAIN &2962 & R4 &6142 & WLCXN & 6358\\
+                DATREG &4102 & R5 &3058 & XDATA & 1826\\
+                EM &12581 & R6 &9654 & XVAR & 5319\\
+                EMALGO &13183 & RAN1 &1432 & &\\ \hline
+\end{tabular}
+\end{center}
+\end{document}
