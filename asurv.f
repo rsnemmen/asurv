@@ -3977,7 +3977,7 @@ C      *               COMPUTE FINAL SCORES - R1(I)                         *
           R1(I)=R1(I)-R2(I)
   25   CONTINUE
 
-       CALL STAT(R1,TEST,XY,ID1,ID2,NTOT)
+       CALL STATS(R1,TEST,XY,ID1,ID2,NTOT)
        PROB=1.0-AGAUSS(TEST)
 
        RETURN
@@ -6073,7 +6073,7 @@ C
 C*******      THE NEXT LINE IS ADDED. ALSO THE PRINTING COMMANDS            *
 C*******      ARE CHANGED.                                                  *
 C
- 200   CALL STAT(SCORE,TEST,XY,ID1,ID2,NTOT)
+ 200   CALL STATS(SCORE,TEST,XY,ID1,ID2,NTOT)
        PROB=1.0-AGAUSS(TEST)
        RETURN
        END
@@ -7680,7 +7680,7 @@ C      **********************************************************************
 C      ***************** SUBROUTINE STAT  ***********************************
 C      **********************************************************************
 C
-       SUBROUTINE STAT(SCORE,WSC,XY,ID1,ID2,NTOT)
+       SUBROUTINE STATS(SCORE,WSC,XY,ID1,ID2,NTOT)
 C
 C      *          GIVEN THE SCORES OF EACH OBSERVATION, THIS                *
 C      *          SUBROUTINE COMPUTES THE FINAL TEST STATISTIC.             *
