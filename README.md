@@ -28,7 +28,7 @@ not call any specialized library.
 This archive contains: 
 
 - this `README` file
-- `asurv_code.f` with 59 surbroutines in FORTRAN 77
+- `asurv.f` with 59 surbroutines in FORTRAN 77
 - `asurv.doc` and `asurv.tex` with the Users' Manual in ASCII and LaTeX respectively
 - `asurv.etc` with test files, subroutine list and Bug Report form.  
 
@@ -39,7 +39,7 @@ These files were retrieved from the [Center for AstroStatistics at PennState web
 The source code can be compiled with
 a statement like 
 
-    gfortran -o asurv asurv_code.f  
+    gfortran -o asurv asurv.f  
 
 ~~Operation has been verified for a variety of computer platforms including UNIX, VMS, VM and DOS.~~ Please verify if this works in your favorite platform and submit a PR if not with improvements.
 
