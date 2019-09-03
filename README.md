@@ -48,16 +48,14 @@ a statement like
 ASURV was written between 1987 and 1992 by Drs. Takashi Isobe (Center
 for Space Research, MIT), Michael LaValley (formerly at Dept. of 
 Statistics, Penn State), and Eric Feigelson.  Code development was 
-supported by several NASA grants.  Questions and problems should be 
+supported by several NASA grants.  
+
+Questions and problems should be 
 addressed to:  Eric Feigelson, Dept. of Astronomy & Astrophysics, 
 Pennsylvania State University, University Park PA USA, FAX 814-863-3399, 
-Email edf@astro.psu.edu, WWW http://www.astro.psu.edu/users/edf).   
+Email edf@astro.psu.edu, WWW http://www.astro.psu.edu/users/edf).  
 
-IMPORTANT: The authors grant researchers and students permission to
-use and copy ASURV code and associated material for non-commercial
-purposes.  We request that publications resulting from its use cite
-one of the references below.  This software is provided `as is' without
-any expressed or implied warranty.  
+README for asurv.shar written by Eric feigelson (Sept. 1996) 
 
 # References
 
@@ -69,10 +67,8 @@ any expressed or implied warranty.
 
 Rev. 0 (1987-1990)  Incomplete and obsolete.
 Rev. 1 (1992-present) Essentially identical versions with minor bugs corrected. 
-9/2019 Code made available on github and compilation bugs fixed
+Rev. 3 (9/2019) Code made available on github and compilation bugs fixed
  
-README for asurv.shar written by Eric feigelson (Sept. 1996)
-
 NOTE: Some users have encountered difficulty compiling ASURV on
 Linux and MacOS systems.  This problem may be solved by renaming subroutines STAT and UNPACK throughout the code.  
 
