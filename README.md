@@ -59,15 +59,17 @@ purposes.  We request that publications resulting from its use cite
 one of the references below.  This software is provided `as is' without
 any expressed or implied warranty.  
 
-References:
+# References
 
 - Feigelson, E. D. and Nelson, P. I. Statistical Methods for Astronomical Data with Upper Limits: I. Univariate Distributions, Astrophyscal Journal 293, 192-206, 1985
 - Isobe, T., Feigelson, E. D., and Nelson, P. I. Statistical Methods for Astronomical Data with Upper Limits: II. Correlation and Regression, Astrophysical Journal, 306, 490-507, 1986
 - LaValley, M., Isobe, T. and Feigelson, E.D. ``ASURV'', Bulletin American Astronomical Society (Software Reports),  22, 917-918, 1990
 
-Revisions:
+# Revisions
+
 Rev. 0 (1987-1990)  Incomplete and obsolete.
 Rev. 1 (1992-present) Essentially identical versions with minor bugs corrected. 
+9/2019 Code made available on github and compilation bugs fixed
  
 README for asurv.shar written by Eric feigelson (Sept. 1996)
 
