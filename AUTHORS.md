@@ -4,6 +4,8 @@ ASURV was written between 1987 and 1992 by
 - Michael LaValley (formerly at Dept. of Statistics, Penn State)
 - Eric Feigelson.  
 
+[Rodrigo Nemmen](https://rodrigonemmen.com) adapted the source files for easy compilation on current architectures.
+
 Code development was supported by several NASA grants.  Questions and problems should be addressed to:  [Eric Feigelson](http://www.astro.psu.edu/users/edf), Dept. of Astronomy & Astrophysics, Pennsylvania State University, University Park PA USA, FAX 814-863-3399, Email edf@astro.psu.edu
 
 # Contributing

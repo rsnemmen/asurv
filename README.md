@@ -29,10 +29,10 @@ This archive contains:
 
 - this `README` file
 - `asurv.f` with 59 surbroutines in FORTRAN 77
-- `asurv.doc` and `asurv.tex` with the Users' Manual in ASCII and LaTeX respectively
+- `manual.txt` and `manual.tex` with the Users' Manual in ASCII and LaTeX respectively
 - `asurv.etc` with test files, subroutine list and Bug Report form.  
 
-These files were retrieved from the [Center for AstroStatistics at PennState website](https://astrostatistics.psu.edu/statcodes/asurv).  
+These files were retrieved from the [Center for AstroStatistics at PennState website](https://astrostatistics.psu.edu/statcodes/asurv) and modified to fit modern architectures.
 
 # Compilation
 
