@@ -41,22 +41,9 @@ a statement like
 
     gfortran -o asurv asurv.f  
 
-~~Operation has been verified for a variety of computer platforms including UNIX, VMS, VM and DOS.~~ Please verify if this works in your favorite platform and submit a PR if not with improvements.
-
-# Authors
-
-ASURV was written between 1987 and 1992 by Drs. Takashi Isobe (Center
-for Space Research, MIT), Michael LaValley (formerly at Dept. of 
-Statistics, Penn State), and Eric Feigelson.  Code development was 
-supported by several NASA grants.  
-
-Questions and problems should be 
-addressed to:  Eric Feigelson, Dept. of Astronomy & Astrophysics, 
-Pennsylvania State University, University Park PA USA 
-
-README for asurv.shar written by Eric feigelson (Sept. 1996) 
-
 # References
+
+If you use ASURV, you are morally obliged to cite the following papers written by the authors of the code:
 
 - Feigelson, E. D. and Nelson, P. I. Statistical Methods for Astronomical Data with Upper Limits: I. Univariate Distributions, Astrophyscal Journal 293, 192-206, 1985
 - Isobe, T., Feigelson, E. D., and Nelson, P. I. Statistical Methods for Astronomical Data with Upper Limits: II. Correlation and Regression, Astrophysical Journal, 306, 490-507, 1986
@@ -68,8 +55,4 @@ README for asurv.shar written by Eric feigelson (Sept. 1996)
 - Rev. 1 (1992-present) Essentially identical versions with minor bugs corrected. 
 - Rev. 3 (9/2019) Code made available on github and compilation bugs fixed
  
-NOTE: Some users have encountered difficulty compiling ASURV on
-Linux and MacOS systems.  This problem may be solved by renaming subroutines STAT and UNPACK throughout the code.  
-
-
-
+ README written by Eric feigelson (Sep. 1996) and revised by [Rodrigo Nemmen](https://rodrigonemmen.com) (Sep. 2019).
