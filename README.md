@@ -1,7 +1,7 @@
 ASURV: Astronomy SURVival analysis 
 =======================================
 
-This shell archive contains source code and documentation for ASURV,
+This contains source code and documentation for ASURV,
 Astronomy SURVival analysis (Rev. 1.3).  ASURV implements a suite of
 statistical methods for the analysis of censored data; i.e. data
 which are known to lie above or below some limit.   It was written
@@ -40,6 +40,10 @@ The source code can be compiled with
 a statement like 
 
     gfortran -o asurv asurv.f  
+
+# Usage
+
+[![asciicast](https://asciinema.org/a/265869.svg)](https://asciinema.org/a/265869)
 
 # References
 
