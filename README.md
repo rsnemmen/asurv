@@ -1,5 +1,5 @@
-ASURV: Astronomy SURVival analysis (Rev. 1.3)
-==============================================
+ASURV: Astronomy SURVival analysis 
+=======================================
 
 This shell archive contains source code and documentation for ASURV,
 Astronomy SURVival analysis (Rev. 1.3).  ASURV implements a suite of
@@ -32,7 +32,7 @@ This archive contains:
 - `manual.txt` and `manual.tex` with the Users' Manual in ASCII and LaTeX respectively
 - `asurv.etc` with test files, subroutine list and Bug Report form.  
 
-These files were retrieved from the [Center for AstroStatistics at PennState website](https://astrostatistics.psu.edu/statcodes/asurv) and modified to fit modern architectures.
+These files were retrieved from the [Center for AstroStatistics at PennState website](https://astrostatistics.psu.edu/statcodes/asurv) and updated to fit modern architectures.
 
 # Compilation
 
@@ -52,8 +52,7 @@ supported by several NASA grants.
 
 Questions and problems should be 
 addressed to:  Eric Feigelson, Dept. of Astronomy & Astrophysics, 
-Pennsylvania State University, University Park PA USA, FAX 814-863-3399, 
-Email edf@astro.psu.edu, WWW http://www.astro.psu.edu/users/edf).  
+Pennsylvania State University, University Park PA USA 
 
 README for asurv.shar written by Eric feigelson (Sept. 1996) 
 
@@ -61,13 +60,13 @@ README for asurv.shar written by Eric feigelson (Sept. 1996)
 
 - Feigelson, E. D. and Nelson, P. I. Statistical Methods for Astronomical Data with Upper Limits: I. Univariate Distributions, Astrophyscal Journal 293, 192-206, 1985
 - Isobe, T., Feigelson, E. D., and Nelson, P. I. Statistical Methods for Astronomical Data with Upper Limits: II. Correlation and Regression, Astrophysical Journal, 306, 490-507, 1986
-- LaValley, M., Isobe, T. and Feigelson, E.D. ``ASURV'', Bulletin American Astronomical Society (Software Reports),  22, 917-918, 1990
+- LaValley, M., Isobe, T. and Feigelson, E.D. ASURV, Bulletin American Astronomical Society (Software Reports),  22, 917-918, 1990
 
 # Revisions
 
-Rev. 0 (1987-1990)  Incomplete and obsolete.
-Rev. 1 (1992-present) Essentially identical versions with minor bugs corrected. 
-Rev. 3 (9/2019) Code made available on github and compilation bugs fixed
+- Rev. 0 (1987-1990)  Incomplete and obsolete.
+- Rev. 1 (1992-present) Essentially identical versions with minor bugs corrected. 
+- Rev. 3 (9/2019) Code made available on github and compilation bugs fixed
  
 NOTE: Some users have encountered difficulty compiling ASURV on
 Linux and MacOS systems.  This problem may be solved by renaming subroutines STAT and UNPACK throughout the code.  
