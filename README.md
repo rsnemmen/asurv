@@ -1,135 +1,183 @@
-ASURV: Astronomy SURVival analysis 
-=======================================
+# ASURV: Astronomy SURVival analysis
 
-This contains source code and documentation for ASURV,
-Astronomy SURVival analysis (Rev. 1.3).  ASURV implements a suite of
-statistical methods for the analysis of censored data; i.e. data
-which are known to lie above or below some limit.   It was written
-specifically to treat left-censoring arising in observational astronomy
-when objects are observed but sometimes not detected due to sensitivity 
-limits.  However, the methods can be useful to researchers in other 
-disciplines, as the code includes techniques that are often omitted 
-from commercial survival analysis packages. 
+ASURV is a survival-analysis package for censored data, especially upper limits
+common in observational astronomy. This repository preserves the original
+Fortran implementation and now ships a maintained Python interface that wraps
+the backend for programmatic use and a modern CLI.
 
-ASURV computes: 
+**Most users should start with the Python package.** The `asurv` executable
+remains the numerical backend and the authoritative implementation of the
+statistics, while the Python layer handles data preparation, backend execution,
+and parsing the text output into structured results.
+
+## What ASURV computes
+
+ASURV provides:
 
 - the maximum-likelihood Kaplan-Meier estimator
-- several univariate two-sample tests (Gehan, Peto-Peto, Peto-Prentice)
-- three bivariate correlation coefficients (Cox regression, generalized Kendall's tau and Spearman's rho)
-- three linear regressions (EM algorithm assuming normal residuals, Buckley-James line, Schmitt line).  
+- several univariate two-sample tests (Gehan, logrank, Peto-Peto, Peto-Prentice)
+- bivariate correlation methods (Cox regression, generalized Kendall's tau,
+  Spearman's rho)
+- linear regressions for censored data (EM algorithm, Buckley-James, Schmitt)
 
-The user 
-is strongly encouraged to read the manual and references below if they
-are unfamiliar with these methods.  The program is stand-alone and does
-not call any specialized library.
+If you are not already familiar with these methods, read `manual.txt` and the
+papers cited below before using the results scientifically.
 
-# Files included
+## Interfaces
 
-This archive contains: 
+| Interface | Best for | Entry points |
+| --- | --- | --- |
+| Python API | notebooks, scripts, reproducible analyses | `asurv.km()`, `asurv.twosample()`, `asurv.bivar()` |
+| CLI | shell workflows without writing Python code | `asurv-py km`, `asurv-py twost`, `asurv-py bivar` |
+| Direct backend | legacy workflows, command files, regression testing | `./asurv KM ...`, `./asurv TWOST ...`, `./asurv BIVAR ...` |
 
-- this `README` file
-- `asurv.f` with 59 surbroutines in FORTRAN 77
-- `manual.txt` and `manual.tex` with the Users' Manual in ASCII and LaTeX respectively
-- `asurv.etc` with test files, subroutine list and Bug Report form.  
+The Python package wraps the same Fortran backend used by the direct interface.
+For numerical correctness, treat the Fortran executable as the source of truth.
 
-These files were retrieved from the [Center for AstroStatistics at PennState website](https://astrostatistics.psu.edu/statcodes/asurv) and updated to fit modern architectures.
+## Installation
 
-# Compilation
+### Prerequisites
 
-Use `make` to build the standalone executable:
+- Python 3.9+
+- `gfortran` or another compiler compatible with the Makefile
 
-    make
-
-The Makefile defaults to `gfortran` and adds the legacy-compatibility
-flags needed by modern compilers. The equivalent manual command is:
-
-    gfortran -std=legacy -fallow-argument-mismatch -o asurv asurv.f
-
-Useful convenience targets:
-
-- `make help` shows the available targets
-- `make clean` removes the built executable
-- `make distclean` also removes common compiler scratch files
-- `make test` runs the bundled smoke and exact-output regression tests
-
-# Validation
-
-Bundled smoke tests based on the examples in `asurv.etc` are available as:
-
-    make smoke
-    make smoke-gal1
-    make smoke-gal2
-    make smoke-gal3
-
-Exact-output regression tests using the embedded sample outputs in `asurv.etc`
-are also available:
-
-    make regression
-    make regression-gal1
-    make regression-gal2
-    make regression-gal3
-
-# Python Interface
-
-## Install
-
-Build the Fortran backend first, then install the Python package in the same directory:
+### Build the backend
 
 ```bash
 make
+```
+
+The Makefile uses the legacy-compatibility flags required by modern `gfortran`
+versions. The equivalent manual command is:
+
+```bash
+gfortran -std=legacy -fallow-argument-mismatch -o asurv asurv.f
+```
+
+### Install the Python package
+
+For normal use:
+
+```bash
+pip install -e .
+```
+
+If you want plotting support:
+
+```bash
+pip install -e ".[plot]"
+```
+
+If you are contributing or running the full developer workflow:
+
+```bash
 pip install -e ".[plot,dev]"
 ```
 
-## Importing
+The Python package requires the Fortran binary at runtime. By default it looks
+for:
+
+1. `ASURV_BIN`
+2. `./asurv` in the current working directory
+3. `asurv` on `PATH`
+
+## Python quick start
+
+The package exposes three high-level entry points:
+
+- `asurv.km()` for Kaplan-Meier estimation
+- `asurv.twosample()` for univariate two-sample tests
+- `asurv.bivar()` for bivariate correlation and regression
+
+All three return structured result objects with `.summary()`, `.raw_output`,
+and method-specific parsed fields. Plotting helpers are available when
+installed with `.[plot]`.
+
+### Kaplan-Meier
 
 ```python
 import pandas as pd
 import asurv
 
-# Kaplan-Meier
 df = pd.read_fwf("gal1.dat", widths=[4, 10], header=None, names=["ind", "lum"])
 df["upper_limit"] = df["ind"] < 0
 
-result = asurv.km(df, value="lum", upper_limit="upper_limit",
-                  title="IR Luminosities of Galaxies",
-                  differential=(25.0, 5, 2.0))
+result = asurv.km(
+    df,
+    value="lum",
+    upper_limit="upper_limit",
+    title="IR Luminosities of Galaxies",
+    differential=(25.0, 5, 2.0),
+)
 
 print(result.summary())
-print(result.table)        # pandas DataFrame: from, to, S, error
-print(result.mean)         # 27.767
-result.plot()              # survival curve with censoring ticks
+print(result.table)
+print(result.mean)
+result.plot()
+```
 
-# Two-sample tests
-df2 = pd.read_fwf("gal2.dat", widths=[4, 4, 10], header=None,
-                   names=["group", "ind", "lum"])
-df2["upper_limit"] = df2["ind"] < 0
+### Two-sample tests
 
-r2 = asurv.twosample(df2, value="lum", group="group", upper_limit="upper_limit",
-                     groups=(0, 1), title="Normal vs Starburst")
+```python
+import pandas as pd
+import asurv
 
-print(r2.summary())                      # table of all 5 test statistics
-print(r2.tests["logrank"].probability)   # p-value
-r2.plot(labels=("Normal", "Starburst"))  # overlaid KM curves
+df = pd.read_fwf(
+    "gal2.dat",
+    widths=[4, 4, 10],
+    header=None,
+    names=["group", "ind", "lum"],
+)
+df["upper_limit"] = df["ind"] < 0
 
-# Bivariate correlation & regression
-df3 = pd.read_fwf("gal3.dat", widths=[4, 10, 10], header=None,
-                   names=["ind", "optical", "infrared"])
-df3["upper_limit"] = df3["ind"] < 0
+result = asurv.twosample(
+    df,
+    value="lum",
+    group="group",
+    upper_limit="upper_limit",
+    groups=(0, 1),
+    title="Normal vs Starburst",
+)
 
-r3 = asurv.bivar(df3, x="optical", y="infrared",
-                 methods=["cox", "em"], y_upper="upper_limit",
-                 title="Optical-Infrared Relation",
-                 x_name="Optical", y_name="Infrared")
+print(result.summary())
+print(result.tests["logrank"].probability)
+result.plot(labels=("Normal", "Starburst"))
+```
 
-print(r3.summary())              # Cox chi², EM intercept/slope/sigma
-print(r3.cox.chi2)               # 18.458
-print(r3.em.slopes)              # [(1.0519, 0.0793)]
-r3.plot(df3, x="optical", y="infrared", y_upper="upper_limit")
+### Bivariate correlation and regression
+
+```python
+import pandas as pd
+import asurv
+
+df = pd.read_fwf(
+    "gal3.dat",
+    widths=[4, 10, 10],
+    header=None,
+    names=["ind", "optical", "infrared"],
+)
+df["upper_limit"] = df["ind"] < 0
+
+result = asurv.bivar(
+    df,
+    x="optical",
+    y="infrared",
+    methods=["cox", "em"],
+    y_upper="upper_limit",
+    title="Optical-Infrared Relation",
+    x_name="Optical",
+    y_name="Infrared",
+)
+
+print(result.summary())
+print(result.cox.chi2)
+print(result.em.slopes)
+result.plot(df, x="optical", y="infrared", y_upper="upper_limit")
 ```
 
 ## CLI
 
-The `asurv-py` command is installed automatically:
+Installing the package exposes `asurv-py`, which mirrors the Python API:
 
 ```bash
 asurv-py km --data-file gal1.dat --title "IR Luminosities" --full-km \
@@ -143,36 +191,99 @@ asurv-py bivar --data-file gal3.dat --title "Optical-IR" \
                --method cox --method em --em-initial-coefficients 0 0 0
 ```
 
-The legacy `python3 asurv_cli.py ...` invocations continue to work via a backward-compatibility shim.
+Legacy invocations through `python3 asurv_cli.py ...` still work via a
+backward-compatibility shim, but new usage should prefer `asurv-py`.
 
-## Running tests
+## Validation and tests
+
+### Build and maintenance targets
+
+- `make help` shows available Make targets
+- `make clean` removes the built executable
+- `make distclean` also removes common compiler scratch files
+
+### Fortran regression suite
+
+The bundled sample cases in `asurv.etc` drive the backend validation suite:
 
 ```bash
-make test          # Fortran smoke + regression tests (unchanged)
-pytest             # Python unit and integration tests
-pytest -m "not integration"  # fast offline tests only (no binary needed)
+make test
+make smoke
+make regression
+make smoke-gal1
+make smoke-gal2
+make smoke-gal3
+make regression-gal1
+make regression-gal2
+make regression-gal3
 ```
 
-## Batch mode (direct)
+The Fortran suite is the authoritative check for numerical correctness.
 
-The Fortran binary can still be called directly in batch mode:
+### Python test suite
 
-    ./asurv KM km.com
-    ./asurv TWOST ts.com
-    ./asurv BIVAR bv.com
+```bash
+pytest
+pytest -m "not integration"
+```
 
-# References
+The full pytest suite exercises the Python wrapper, parser, and integration with
+the Fortran backend. The offline subset skips tests that require a built
+`./asurv` binary.
 
-If you use ASURV, you are morally obliged to cite the following papers written by the authors of the code:
+## Direct Fortran usage
 
-- Feigelson, E. D. and Nelson, P. I. Statistical Methods for Astronomical Data with Upper Limits: I. Univariate Distributions, Astrophyscal Journal 293, 192-206, 1985
-- Isobe, T., Feigelson, E. D., and Nelson, P. I. Statistical Methods for Astronomical Data with Upper Limits: II. Correlation and Regression, Astrophysical Journal, 306, 490-507, 1986
-- LaValley, M., Isobe, T. and Feigelson, E.D. ASURV, Bulletin American Astronomical Society (Software Reports),  22, 917-918, 1990
+The standalone executable still supports direct batch execution:
 
-# Revisions
+```bash
+./asurv KM km.com
+./asurv TWOST ts.com
+./asurv BIVAR bv.com
+```
 
-- Rev. 0 (1987-1990)  Incomplete and obsolete.
-- Rev. 1 (1992-present) Essentially identical versions with minor bugs corrected. 
-- Rev. 3 (9/2019) Code made available on github and compilation bugs fixed
- 
- README written by Eric feigelson (Sep. 1996) and revised by [Rodrigo Nemmen](https://rodrigonemmen.com) (Sep. 2019).
+This corresponds to the traditional ASURV workflows:
+
+- `UNIVAR` for Kaplan-Meier estimation and two-sample tests
+- `BIVAR` for correlation and regression
+
+If you are working directly with command files, fixed-width input files, or
+legacy output reports, use `manual.txt` and `manual.tex` as the primary
+reference.
+
+## Repository layout
+
+| Path | Purpose |
+| --- | --- |
+| `asurv.f` | original fixed-form Fortran implementation |
+| `asurv.etc` | bundled sample data, command files, expected outputs |
+| `manual.txt`, `manual.tex` | user manual |
+| `src/asurv/` | Python wrapper, CLI, backend launcher, parsers, plotting helpers |
+| `tests/` | pytest suite for wrapper, parser, validation, and integration coverage |
+| `asurv_cli.py` | backward-compatibility shim to `src/asurv/cli.py` |
+| `pyproject.toml` | Python package metadata and console-script definition |
+
+These files were originally retrieved from the Center for Astrostatistics at
+Penn State and later updated to build on modern systems and support the Python
+wrapper.
+
+## References
+
+If you use ASURV, please cite:
+
+- Feigelson, E. D. and Nelson, P. I. Statistical Methods for Astronomical Data
+  with Upper Limits: I. Univariate Distributions, Astrophysical Journal 293,
+  192-206, 1985
+- Isobe, T., Feigelson, E. D., and Nelson, P. I. Statistical Methods for
+  Astronomical Data with Upper Limits: II. Correlation and Regression,
+  Astrophysical Journal 306, 490-507, 1986
+- LaValley, M., Isobe, T. and Feigelson, E. D. ASURV, Bulletin of the American
+  Astronomical Society (Software Reports), 22, 917-918, 1990
+
+## Revisions
+
+- Rev. 0 (1987-1990): incomplete and obsolete
+- Rev. 1 (1992-present): essentially identical versions with minor bugs corrected
+- Rev. 3 (2019): code made available on GitHub and compilation bugs fixed
+
+README originally written by Eric Feigelson (Sep. 1996) and later revised by
+[Rodrigo Nemmen](https://rodrigonemmen.com).
