@@ -69,60 +69,97 @@ are also available:
     make regression-gal2
     make regression-gal3
 
-# Usage
+# Python Interface
 
-[![asciicast](https://asciinema.org/a/265869.svg)](https://asciinema.org/a/265869)
+## Install
 
-An experimental Python wrapper is also available as `asurv_cli.py`. It keeps
-the legacy Fortran executable as the backend, but replaces command-file authoring
-with subcommands and uses the executable's direct batch modes (`KM`, `TWOST`,
-`BIVAR`) instead of driving the interactive menu. It currently expects the
-existing legacy-formatted ASURV data files as input.
+Build the Fortran backend first, then install the Python package in the same directory:
 
-The executable can also be called directly in batch mode:
+```bash
+make
+pip install -e ".[plot,dev]"
+```
+
+## Importing
+
+```python
+import pandas as pd
+import asurv
+
+# Kaplan-Meier
+df = pd.read_fwf("gal1.dat", widths=[4, 10], header=None, names=["ind", "lum"])
+df["upper_limit"] = df["ind"] < 0
+
+result = asurv.km(df, value="lum", upper_limit="upper_limit",
+                  title="IR Luminosities of Galaxies",
+                  differential=(25.0, 5, 2.0))
+
+print(result.summary())
+print(result.table)        # pandas DataFrame: from, to, S, error
+print(result.mean)         # 27.767
+result.plot()              # survival curve with censoring ticks
+
+# Two-sample tests
+df2 = pd.read_fwf("gal2.dat", widths=[4, 4, 10], header=None,
+                   names=["group", "ind", "lum"])
+df2["upper_limit"] = df2["ind"] < 0
+
+r2 = asurv.twosample(df2, value="lum", group="group", upper_limit="upper_limit",
+                     groups=(0, 1), title="Normal vs Starburst")
+
+print(r2.summary())                      # table of all 5 test statistics
+print(r2.tests["logrank"].probability)   # p-value
+r2.plot(labels=("Normal", "Starburst"))  # overlaid KM curves
+
+# Bivariate correlation & regression
+df3 = pd.read_fwf("gal3.dat", widths=[4, 10, 10], header=None,
+                   names=["ind", "optical", "infrared"])
+df3["upper_limit"] = df3["ind"] < 0
+
+r3 = asurv.bivar(df3, x="optical", y="infrared",
+                 methods=["cox", "em"], y_upper="upper_limit",
+                 title="Optical-Infrared Relation",
+                 x_name="Optical", y_name="Infrared")
+
+print(r3.summary())              # Cox chi², EM intercept/slope/sigma
+print(r3.cox.chi2)               # 18.458
+print(r3.em.slopes)              # [(1.0519, 0.0793)]
+r3.plot(df3, x="optical", y="infrared", y_upper="upper_limit")
+```
+
+## CLI
+
+The `asurv-py` command is installed automatically:
+
+```bash
+asurv-py km --data-file gal1.dat --title "IR Luminosities" --full-km \
+            --diff-start 25 --diff-bins 5 --diff-size 2
+
+asurv-py twost --data-file gal2.dat --title "Two-Sample Test" \
+               --first-group-name Normal --second-group-name Starburst
+
+asurv-py bivar --data-file gal3.dat --title "Optical-IR" \
+               --x-name Optical --y-name Infrared \
+               --method cox --method em --em-initial-coefficients 0 0 0
+```
+
+The legacy `python3 asurv_cli.py ...` invocations continue to work via a backward-compatibility shim.
+
+## Running tests
+
+```bash
+make test          # Fortran smoke + regression tests (unchanged)
+pytest             # Python unit and integration tests
+pytest -m "not integration"  # fast offline tests only (no binary needed)
+```
+
+## Batch mode (direct)
+
+The Fortran binary can still be called directly in batch mode:
 
     ./asurv KM km.com
     ./asurv TWOST ts.com
     ./asurv BIVAR bv.com
-
-Examples:
-
-    python3 asurv_cli.py km \
-      --data-file gal1.dat \
-      --title "IR Luminosities of Galaxies" \
-      --nvar 1 \
-      --column 1 \
-      --variable-name IR \
-      --full-km \
-      --diff-start 25 \
-      --diff-bins 5 \
-      --diff-size 2 \
-      --print-data
-
-    python3 asurv_cli.py twost \
-      --data-file gal2.dat \
-      --title "IR Luminosities of Galaxies" \
-      --nvar 1 \
-      --column 1 \
-      --variable-name IR \
-      --group-id 0 --group-id 1 --group-id 2 \
-      --first-group 0 \
-      --second-group 1 \
-      --first-group-name Normal \
-      --second-group-name Starburst \
-      --full-km
-
-    python3 asurv_cli.py bivar \
-      --data-file gal3.dat \
-      --title "Optical-Infrared Relation" \
-      --n-independent 1 \
-      --x-name Optical \
-      --y-name Infrared \
-      --method cox \
-      --method em \
-      --em-tolerance 1.0e-5 \
-      --em-initial-coefficients 0 0 0 \
-      --em-max-iterations 50
 
 # References
 
