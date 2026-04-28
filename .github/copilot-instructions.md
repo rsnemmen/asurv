@@ -2,42 +2,83 @@
 
 ## Build and verification
 
-- Build the standalone executable from the consolidated Fortran 77 source:
-  ```bash
-  gfortran -o asurv asurv.f
-  ```
-- There is no dedicated lint target or automated test suite in this repository. Use the bundled examples in `asurv.etc` as smoke tests.
-- Single smoke test for the Kaplan-Meier path (`gal1.dat` / `gal1.com` embedded in `asurv.etc`):
-  ```bash
-  repo_root=$(pwd)
-  tmpdir=$(mktemp -d)
-  trap 'rm -rf "$tmpdir"' EXIT
-  awk 'NR>=66&&NR<=71{print}' asurv.etc > "$tmpdir/gal1.dat"
-  awk 'NR>=75&&NR<=86{print}' asurv.etc > "$tmpdir/gal1.com"
-  (
-    cd "$tmpdir" &&
-    printf '1\n1\ny\ngal1.com\nn\n' | "$repo_root"/asurv >/dev/null &&
-    grep -q 'KAPLAN-MEIER ESTIMATOR' gal1.out
-  )
-  ```
-- `asurv.etc` also contains reusable TWOST (`gal2.*`) and BIVAR (`gal3.*`) sample data, command files, and expected output.
+Build the Fortran backend, then install the Python package:
+
+```bash
+make                            # build ./asurv (gfortran -std=legacy -fallow-argument-mismatch)
+pip install -e ".[plot,dev]"    # install the Python wrapper (editable, with extras)
+```
+
+Two parallel test suites — both must pass:
+
+```bash
+# Fortran (authoritative for numerical correctness)
+make test                        # all smoke + regression tests
+make {smoke,regression}-gal{1,2,3}  # individual cases
+
+# Python
+pytest                           # 53 tests (requires ./asurv built)
+pytest -m "not integration"      # offline subset; no binary needed
+```
+
+The Fortran regression tests extract `gal1`/`gal2`/`gal3` data from `asurv.etc`, run the binary via piped stdin, and diff the output. The Python integration tests assert against parsed result fields (e.g. `result.cox.chi2`) and catch parser regressions in addition to backend regressions. Numerical correctness is owned by the Fortran suite.
 
 ## High-level architecture
 
-- `asurv.f` is the whole application: one fixed-form Fortran source file containing the main menu plus all statistical subroutines. The old multi-file build list is preserved only as historical reference inside `asurv.etc`; the maintained build path in this repo is the single-file `gfortran -o asurv asurv.f` flow from `README.md`.
-- The main program shows the top-level menu, then dispatches to `UNIVAR` for univariate workflows or `BIVAR` for correlation/regression workflows.
-- `UNIVAR` owns both Kaplan-Meier estimation and two-sample testing. It reads fixed-width data through `DATAIN`, gathers menu/command-file input itself, calls `KMESTM` for Kaplan-Meier output, and calls `TWOST` for two-sample statistics before optionally emitting per-group Kaplan-Meier summaries.
-- `BIVAR` reads bivariate data through `DATREG`, decides which methods are legal from the censoring pattern and number of independent variables, then dispatches to `COXREG`, `BHK`, `SPRMAN`, `EM`, `BJ`, or `TWOKM`. Method-specific extra prompts are isolated in `R3`, `R4`, `R5`, and `R6`.
-- Most algorithm routines work on fixed-size work arrays allocated in `UNIVAR` or `BIVAR` and passed down through long argument lists rather than local allocation.
+`asurv.f` is the whole Fortran application: one fixed-form Fortran 77 source file containing the main menu plus all statistical subroutines. The old multi-file build list is preserved only as historical reference inside `asurv.etc`.
+
+**Fortran dispatch:**
+- `MAIN` → `UNIVAR` (menu choice 1) or `BIVAR` (menu choice 2).
+- `UNIVAR` handles Kaplan-Meier and two-sample tests. Reads data via `DATAIN`, calls `KMESTM` and `TWOST`.
+- `BIVAR` handles correlation/regression. Reads data via `DATREG`, dispatches to `COXREG`, `BHK`, `SPRMAN`, `EM`, `BJ`, or `TWOKM`. Method-specific prompts are in `R3`–`R6`.
+- Most algorithm routines work on fixed-size work arrays allocated in `UNIVAR`/`BIVAR` and passed through long argument lists.
+
+**Batch modes** (bypass the interactive menu):
+
+```bash
+./asurv KM km.com
+./asurv TWOST ts.com
+./asurv BIVAR bv.com
+```
+
+**Python package** (`src/asurv/`): the primary user interface. Wraps the Fortran binary in three layers:
+
+1. **Input translation** (`_ind.py`, `_validate.py`, `_commands.py`) — pandas DataFrame + boolean censoring columns → ASURV IND codes + fixed-width data text + command-file lines
+2. **Backend invocation** (`_backend.py`) — temp workspace, executable discovery (`ASURV_BIN` env var → `./asurv` in cwd → PATH), `subprocess.run` in batch mode
+3. **Output parsing** (`_parsers.py`) — section-based regex on `.out` text → frozen dataclasses (`KMResult`, `TwoSampleResult`, `BivariateResult`, etc.)
+
+Public API: `asurv.km()`, `asurv.twosample()`, `asurv.bivar()`. CLI entry point: `asurv-py`. The legacy `asurv_cli.py` at the repo root is a 3-line backward-compat shim — do not add logic to it.
+
+**Wrap, don't rewrite.** Do not extend `asurv.f` to add Python-facing features. The Fortran is the source of numerical truth and must remain bit-for-bit reproducible against `asurv.etc`. New features belong in the Python layer.
+
+**When Fortran output format changes:** update `src/asurv/_parsers.py` only. Key anchor strings: `# OF DATA POINTS`, `VARIABLE RANGE      KM ESTIMATOR   ERROR`, `MEAN=`, `TEST STATISTIC`, `PROBABILITY`, `GLOBAL CHI SQUARE`, `INTERCEPT COEFF`, `SLOPE COEFF`.
 
 ## Key conventions
 
-- Keep edits compatible with fixed-form Fortran 77. This codebase uses column-1 `C` comments, `+` continuation lines, and the existing `IMPLICIT REAL*8 (A-H,O-Z), INTEGER (I-N)` convention throughout the numerical routines.
-- Keep the hard size limits synchronized in both menu branches. `UNIVAR` and `BIVAR` each declare `PARAMETER(MVAR=4, NDAT=500, IBIN=50)`; if you raise dataset or variable limits, update both places together.
-- Input is fixed-width, not free-form. `DATAIN` uses `FORMAT(10(I4,F10.3))` for Kaplan-Meier data and `FORMAT(I4,10(I4,F10.3))` for two-sample data; `DATREG` uses `FORMAT(I4,11F10.3)` for bivariate data.
-- If `MVAR` grows past 10, you must widen the `DATAIN` and `DATREG` read formats as described in Appendix A7 of the manual. If data needs more than three decimal places, update the relevant formats and reduce `CONST` in `CENS` so it retains at least two more decimal places than the data.
-- `CHARACTER*9` is a real constraint across filenames, variable names, group labels, command files, and output files. Keep those identifiers within 9 characters unless you are intentionally widening the declarations across the input/output code.
-- Do not "simplify away" the upper-limit sign normalization in helpers like `AARRAY` and `XVAR`. Those routines flip upper-limit data through `ISIGN` so the downstream statistics can reuse the lower-limit logic.
-- Two-sample mode is intentionally bundled: `TWOST` produces the full set of Gehan (permutation and hypergeometric), logrank, Peto-Peto, and Peto-Prentice results rather than asking callers to choose one test at a time.
-- When automating runs, prefer command files plus piped top-level menu choices over trying to answer every prompt interactively. The authoritative command-file layouts are in `UNIVAR`, `BIVAR`, and the `R3`-`R6` helper routines, with worked examples mirrored in `manual.txt` and `asurv.etc`.
-- `README.md` and `AUTHORS.md` are the active project docs. Preserve the current terminology (`UNIVAR` for Kaplan-Meier / two-sample work, `BIVAR` for correlation / regression work), and note that contributors are expected to discuss substantial changes with the owners before submitting them.
+- Keep edits compatible with fixed-form Fortran 77: column-1 `C` comments, `+` continuation lines, `IMPLICIT REAL*8 (A-H,O-Z), INTEGER (I-N)` throughout numerical routines.
+- Keep the hard size limits synchronized in both menu branches. `UNIVAR` and `BIVAR` each declare `PARAMETER(MVAR=4, NDAT=500, IBIN=50)`; if you raise limits, update both.
+- Input is fixed-width: `DATAIN` uses `FORMAT(10(I4,F10.3))` for KM data and `FORMAT(I4,10(I4,F10.3))` for two-sample data; `DATREG` uses `FORMAT(I4,11F10.3)` for bivariate data.
+- If `MVAR` grows past 10, widen the `DATAIN`/`DATREG` formats per Appendix A7 of the manual. If data needs more than three decimal places, update formats and reduce `CONST` in `CENS`.
+- `CHARACTER*9` is a hard limit for filenames, variable names, group labels, command files, and output files.
+- Do not remove the upper-limit sign normalization in `AARRAY` and `XVAR` — those routines flip upper-limit data via `ISIGN` so downstream statistics can reuse lower-limit logic.
+- `TWOST` always computes all five tests (Gehan permutation, Gehan hypergeometric, logrank, Peto-Peto, Peto-Prentice) — this is intentional, not redundant.
+
+### Quirks the Python wrapper hides (relevant if bypassing the wrapper)
+
+- **Output files use `STATUS='NEW'`** — the named `.out` file must not pre-exist or the open fails.
+- **Schmitt bootstrap requires a negative random seed** — `bivar_command_lines` in `_commands.py` silently negates positive values.
+- **`OUTPUT='         '` (9 spaces) routes results to stdout** instead of a file.
+- **Filenames are truncated to 9 chars** — the Python wrapper always copies user data to `data.dat` in a fresh temp workspace.
+- **Command-file integers are 4-wide** — fields read by `DATA2` use `4A1`/`12A1`/`20A1` formats.
+
+## Repo layout
+
+```
+asurv.f, Makefile, asurv.etc, manual.txt   Fortran sources + sample data
+pyproject.toml                              Python package config
+src/asurv/                                  Python package (wrappers, parsers, results)
+tests/                                      pytest suite (conftest.py extracts gal1/2/3 from asurv.etc)
+asurv_cli.py                                3-line backward-compat shim → src/asurv/cli.py
+```
+
+`README.md` is the active user-facing doc. Preserve existing terminology (`UNIVAR` for KM/two-sample, `BIVAR` for correlation/regression). Discuss substantial changes with the owners before submitting.
