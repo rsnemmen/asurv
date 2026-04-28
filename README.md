@@ -281,4 +281,4 @@ If you use ASURV, please cite:
 
 ## Revisions
 
-The original Fortran version was originally written by Feigelson, Nelson & Isobe (circa 1996). Bugs were fixed Nemmen on 2019. Codebase modernization and python wrappers started on 2026.
+The original Fortran version was written by Feigelson, Nelson & Isobe and publicly released circa 1996. Bugs were fixed by Nemmen on 2019 (this legacy version is available in the `legacy` branch). Codebase modernization and python wrappers developed on 2026.
