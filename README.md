@@ -281,9 +281,4 @@ If you use ASURV, please cite:
 
 ## Revisions
 
-- Rev. 0 (1987-1990): incomplete and obsolete
-- Rev. 1 (1992-present): essentially identical versions with minor bugs corrected
-- Rev. 3 (2019): code made available on GitHub and compilation bugs fixed
-
-README originally written by Eric Feigelson (Sep. 1996) and later revised by
-[Rodrigo Nemmen](https://rodrigonemmen.com).
+The original Fortran version was originally written by Feigelson, Nelson & Isobe (circa 1996). Bugs were fixed Nemmen on 2019. Codebase modernization and python wrappers started on 2026.
