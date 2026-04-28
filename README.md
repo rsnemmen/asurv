@@ -36,10 +36,29 @@ These files were retrieved from the [Center for AstroStatistics at PennState web
 
 # Compilation
 
-The source code can be compiled with
-a statement like 
+Use `make` to build the standalone executable:
 
-    gfortran -o asurv asurv.f  
+    make
+
+The Makefile defaults to `gfortran` and adds the legacy-compatibility
+flags needed by modern compilers. The equivalent manual command is:
+
+    gfortran -std=legacy -fallow-argument-mismatch -o asurv asurv.f
+
+Useful convenience targets:
+
+- `make help` shows the available targets
+- `make clean` removes the built executable
+- `make distclean` also removes common compiler scratch files
+
+# Validation
+
+Bundled smoke tests based on the examples in `asurv.etc` are available as:
+
+    make smoke
+    make smoke-gal1
+    make smoke-gal2
+    make smoke-gal3
 
 # Usage
 
