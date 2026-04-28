@@ -73,6 +73,50 @@ are also available:
 
 [![asciicast](https://asciinema.org/a/265869.svg)](https://asciinema.org/a/265869)
 
+An experimental Python wrapper is also available as `asurv_cli.py`. It keeps
+the legacy Fortran executable as the backend, but replaces command-file authoring
+and menu navigation with subcommands. It currently expects the existing
+legacy-formatted ASURV data files as input.
+
+Examples:
+
+    python3 asurv_cli.py km \
+      --data-file gal1.dat \
+      --title "IR Luminosities of Galaxies" \
+      --nvar 1 \
+      --column 1 \
+      --variable-name IR \
+      --full-km \
+      --diff-start 25 \
+      --diff-bins 5 \
+      --diff-size 2 \
+      --print-data
+
+    python3 asurv_cli.py twost \
+      --data-file gal2.dat \
+      --title "IR Luminosities of Galaxies" \
+      --nvar 1 \
+      --column 1 \
+      --variable-name IR \
+      --group-id 0 --group-id 1 --group-id 2 \
+      --first-group 0 \
+      --second-group 1 \
+      --first-group-name Normal \
+      --second-group-name Starburst \
+      --full-km
+
+    python3 asurv_cli.py bivar \
+      --data-file gal3.dat \
+      --title "Optical-Infrared Relation" \
+      --n-independent 1 \
+      --x-name Optical \
+      --y-name Infrared \
+      --method cox \
+      --method em \
+      --em-tolerance 1.0e-5 \
+      --em-initial-coefficients 0 0 0 \
+      --em-max-iterations 50
+
 # References
 
 If you use ASURV, you are morally obliged to cite the following papers written by the authors of the code:
