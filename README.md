@@ -278,7 +278,3 @@ If you use ASURV, please cite:
   Astrophysical Journal 306, 490-507, 1986
 - LaValley, M., Isobe, T. and Feigelson, E. D. ASURV, Bulletin of the American
   Astronomical Society (Software Reports), 22, 917-918, 1990
-
-## Revisions
-
-The original Fortran version was written by Feigelson, Nelson & Isobe and publicly released circa 1996. Bugs were fixed by Nemmen on 2019 (this legacy version is available in the `legacy` branch). Codebase modernization and python wrappers developed on 2026.
