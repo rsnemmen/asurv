@@ -349,18 +349,17 @@ def ensure_bivar_method_compatibility(
             )
 
 
-def run_legacy(
-    executable: Path, workspace: Path, menu_script: str, output_name: str
+def run_backend(
+    executable: Path, workspace: Path, mode: str, command_name: str, output_name: str
 ) -> tuple[str, str]:
     executable = executable.resolve()
     if not executable.is_file():
         raise ExecutionError(f"ASURV executable not found: {executable}")
     completed = subprocess.run(
-        [str(executable)],
+        [str(executable), mode, command_name],
         cwd=workspace,
-        input=menu_script,
-        text=True,
         capture_output=True,
+        text=True,
         check=False,
     )
     output_path = workspace / output_name
@@ -507,11 +506,8 @@ def run_km(args: argparse.Namespace) -> int:
         stage_data_file(args.data_file, workspace / data_name)
         args.command_path = workspace / "km.com"
         render_km_command(args, data_name, "km.out")
-        stdout_text, report_text = run_legacy(
-            args.executable,
-            workspace,
-            "\n\n1\n1\ny\nkm.com\nn\n",
-            "km.out",
+        stdout_text, report_text = run_backend(
+            args.executable, workspace, "KM", "km.com", "km.out"
         )
         emit_results(args, workspace, report_text, stdout_text)
         if args.keep_workspace:
@@ -549,11 +545,8 @@ def run_twost(args: argparse.Namespace) -> int:
         stage_data_file(args.data_file, workspace / data_name)
         args.command_path = workspace / "ts.com"
         render_twost_command(args, data_name, "ts.out")
-        stdout_text, report_text = run_legacy(
-            args.executable,
-            workspace,
-            "\n\n1\n2\ny\nts.com\nn\n",
-            "ts.out",
+        stdout_text, report_text = run_backend(
+            args.executable, workspace, "TWOST", "ts.com", "ts.out"
         )
         emit_results(args, workspace, report_text, stdout_text)
         if args.keep_workspace:
@@ -593,11 +586,8 @@ def run_bivar(args: argparse.Namespace) -> int:
         stage_data_file(args.data_file, workspace / data_name)
         args.command_path = workspace / "bv.com"
         render_bivar_command(args, data_name, "bv.out")
-        stdout_text, report_text = run_legacy(
-            args.executable,
-            workspace,
-            "\n\n2\ny\nbv.com\nn\n",
-            "bv.out",
+        stdout_text, report_text = run_backend(
+            args.executable, workspace, "BIVAR", "bv.com", "bv.out"
         )
         emit_results(args, workspace, report_text, stdout_text)
         if args.keep_workspace:

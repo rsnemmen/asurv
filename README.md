@@ -75,8 +75,15 @@ are also available:
 
 An experimental Python wrapper is also available as `asurv_cli.py`. It keeps
 the legacy Fortran executable as the backend, but replaces command-file authoring
-and menu navigation with subcommands. It currently expects the existing
-legacy-formatted ASURV data files as input.
+with subcommands and uses the executable's direct batch modes (`KM`, `TWOST`,
+`BIVAR`) instead of driving the interactive menu. It currently expects the
+existing legacy-formatted ASURV data files as input.
+
+The executable can also be called directly in batch mode:
+
+    ./asurv KM km.com
+    ./asurv TWOST ts.com
+    ./asurv BIVAR bv.com
 
 Examples:
 
