@@ -50,6 +50,7 @@ Useful convenience targets:
 - `make help` shows the available targets
 - `make clean` removes the built executable
 - `make distclean` also removes common compiler scratch files
+- `make test` runs the bundled smoke and exact-output regression tests
 
 # Validation
 
@@ -59,6 +60,14 @@ Bundled smoke tests based on the examples in `asurv.etc` are available as:
     make smoke-gal1
     make smoke-gal2
     make smoke-gal3
+
+Exact-output regression tests using the embedded sample outputs in `asurv.etc`
+are also available:
+
+    make regression
+    make regression-gal1
+    make regression-gal2
+    make regression-gal3
 
 # Usage
 
